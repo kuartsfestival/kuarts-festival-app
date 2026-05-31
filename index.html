@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KuArts 2026">
+<meta name="theme-color" content="#111110">
+<link rel="apple-touch-icon" href="https://images.squarespace-cdn.com/content/69cb9d5f8c11eb472c8992b7/30c7ba2b-1f20-44d7-b085-e817ced617f2/KuArts_2026+Logo.png?content-type=image%2Fpng">
+<link rel="manifest" href="manifest.json">
+<title>KuArts 2026</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;700&family=DM+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --bg:      #111110;
+  --bg2:     #1c1c1a;
+  --bg3:     #262624;
+  --coral:   #E8593C;
+  --sky:     #A8DDE9;
+  --cream:   #F2EDD7;
+  --muted:   rgba(242,237,215,0.45);
+  --border:  rgba(242,237,215,0.09);
+  --purple:  #534AB7;
+  --blue:    #3B8BD4;
+  --green:   #2D7A4F;
+  --amber:   #BA7517;
+  --navy:    #185FA5;
+  --red:     #993C1D;
+  --rad:     14px;
+}
+
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'DM Sans', sans-serif;
+  overflow: hidden;
+}
+
+#app {
+  max-width: 430px;
+  margin: 0 auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Screens ── */
+.screen {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 76px;
+  display: none;
+  -webkit-overflow-scrolling: touch;
+}
+.screen::-webkit-scrollbar { display: none; }
+.screen.active { display: block; }
+
+/* ── Bottom nav ── */
+nav {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 72px;
+  background: rgba(17,17,16,0.96);
+  backdrop-filter: blur(16px);
+  border-top: 0.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-bottom: env(safe-area-inset-bottom);
+  z-index: 50;
+}
+.nb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 20px;
+}
+.nb svg { width: 22px; height: 22px; stroke-width: 1.6; fill: none; }
+.nb span { font-size: 10px; font-weight: 500; }
+.nb.on svg  { stroke: var(--coral); }
+.nb.on span { color: var(--coral); }
+.nb:not(.on) svg  { stroke: var(--muted); }
+.nb:not(.on) span { color: var(--muted); }
+
+/* ── HOME ── */
+.hero {
+  position: relative;
+  height: 130px;
+  overflow: hidden;
+}
+.hero img.bg {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 70%;
+}
+.hero-fade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(17,17,16,0.15), rgba(17,17,16,0.82));
+}
+.hero-logo {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+.hero-logo img {
+  max-width: 155px;
+  max-height: 72px;
+  object-fit: contain;
+}
+
+.sec { padding: 20px 16px 0; }
+.sec-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.pulse {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--coral);
+  flex-shrink: 0;
+  animation: blink 1.2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.15} }
+
+/* event card row */
+.erow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--rad);
+  padding: 11px 13px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background .12s;
+}
+.erow:active { background: var(--bg3); }
+.erow.live { border-color: rgba(232,89,60,0.3); }
+.ethumb {
+  width: 46px; height: 62px;
+  border-radius: 7px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--bg3);
+}
+.ethumb img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.einfo { flex: 1; min-width: 0; }
+.etitle {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cream);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 3px;
+}
+.emeta { font-size: 11px; color: var(--muted); }
+.etag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  background: rgba(255,255,255,0.07);
+  color: rgba(242,237,215,0.5);
+}
+.etag.live { background: rgba(232,89,60,0.15); color: var(--coral); border: 0.5px solid rgba(232,89,60,0.3); }
+
+/* carousel */
+.car-wrap { overflow: hidden; margin: 0 -16px; padding: 0 16px; }
+.car-track {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-right: 16px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.car-track::-webkit-scrollbar { display: none; }
+.car-card {
+  min-width: 250px;
+  border-radius: var(--rad);
+  padding: 16px;
+  flex-shrink: 0;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: opacity .12s;
+}
+.car-card:active { opacity: .85; }
+.car-card::after {
+  content: '';
+  position: absolute;
+  top: -28px; right: -28px;
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+}
+.cc-tag {
+  font-size: 9px; font-weight: 700;
+  background: rgba(0,0,0,0.22);
+  color: var(--cream);
+  padding: 2px 9px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  display: inline-block;
+  margin-bottom: 9px;
+}
+.cc-day { font-size: 10px; color: rgba(242,237,215,0.6); float: right; margin-top: 1px; }
+.cc-title {
+  font-family: 'Fraunces', serif;
+  font-size: 16px; font-weight: 600;
+  color: var(--cream);
+  line-height: 1.2;
+  margin-bottom: 3px;
+  clear: both;
+}
+.cc-venue { font-size: 11px; color: rgba(242,237,215,0.65); margin-bottom: 10px; }
+.cc-time { font-size: 11px; color: rgba(242,237,215,0.7); }
+
+/* programme tiles */
+.tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 16px;
+  margin-top: 10px;
+}
+.tile {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--rad);
+  padding: 15px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  transition: background .12s;
+}
+.tile:active { background: var(--bg3); }
+.tile svg { width: 21px; height: 21px; stroke-width: 1.8; fill: none; }
+.tile-name { font-size: 13px; font-weight: 500; color: var(--cream); }
+.tile-sub  { font-size: 11px; color: var(--muted); }
+
+/* ── PROGRAMME ── */
+.ph { padding: 20px 16px 0; }
+.ph-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 700;
+  color: var(--cream);
+  margin-bottom: 3px;
+}
+.ph-sub { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+
+.pills {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 3px;
+  margin-bottom: 8px;
+}
+.pills::-webkit-scrollbar { display: none; }
+.pill {
+  flex-shrink: 0;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 12px; font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  background: rgba(255,255,255,0.07);
+  color: rgba(242,237,215,0.6);
+  border: 0.5px solid rgba(255,255,255,0.1);
+  transition: all .12s;
+}
+.pill.pd { background: var(--coral); color: var(--cream); border-color: transparent; }
+.pill.pc { background: var(--sky);   color: #111; border-color: transparent; }
+
+.day-lbl {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: rgba(242,237,215,0.28);
+  padding: 10px 16px 6px;
+}
+.elist { padding: 0 16px; }
+
+/* ── DETAIL ── */
+.dh {
+  position: relative;
+  height: 210px;
+  overflow: hidden;
+}
+.dh img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.dh-fade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(17,17,16,0.25), rgba(17,17,16,0.94));
+}
+.dh-back {
+  position: absolute;
+  top: 14px; left: 14px;
+  background: rgba(0,0,0,0.38);
+  border: 0.5px solid rgba(255,255,255,0.18);
+  color: var(--cream);
+  border-radius: 20px;
+  padding: 5px 13px;
+  font-size: 12px; font-weight: 500;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+}
+.dh-back svg { width: 13px; height: 13px; stroke: var(--cream); stroke-width: 2; fill: none; }
+.dh-info {
+  position: absolute;
+  bottom: 14px; left: 16px; right: 16px;
+}
+.d-badge {
+  display: inline-block;
+  font-size: 10px; font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin-bottom: 6px;
+}
+.d-title {
+  font-family: 'Fraunces', serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--cream);
+  line-height: 1.15;
+}
+.d-body { padding: 18px 16px; }
+.chips {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-bottom: 14px;
+}
+.chip {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 12px;
+  display: flex; align-items: center; gap: 9px;
+}
+.chip.wide { grid-column: span 2; }
+.chip svg { width: 15px; height: 15px; stroke: var(--sky); stroke-width: 1.8; fill: none; flex-shrink: 0; }
+.chip-lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 1px; }
+.chip-val { font-size: 12px; font-weight: 500; color: var(--cream); }
+
+.acts {
+  display: flex;
+  gap: 9px;
+  margin-bottom: 14px;
+}
+.btn-book {
+  flex: 1;
+  background: var(--coral);
+  color: var(--cream);
+  border: none;
+  padding: 13px;
+  border-radius: 28px;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-nav {
+  flex: 1;
+  background: transparent;
+  color: rgba(242,237,215,0.7);
+  border: 0.5px solid rgba(255,255,255,0.14);
+  padding: 13px;
+  border-radius: 28px;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+}
+.d-desc {
+  font-size: 13px;
+  color: rgba(242,237,215,0.62);
+  line-height: 1.78;
+  padding-top: 14px;
+  border-top: 0.5px solid var(--border);
+}
+
+/* ── MAP ── */
+.mh { padding: 18px 16px 14px; }
+.mh-title { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700; color: var(--cream); }
+.mh-sub   { font-size: 12px; color: var(--muted); margin-top: 2px; }
+#map { margin: 0 16px 14px; height: 210px; border-radius: var(--rad); overflow: hidden; border: 0.5px solid var(--border); }
+.vlst { padding: 0 16px; }
+.vrow {
+  display: flex; align-items: center; gap: 11px;
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--rad);
+  padding: 12px 13px;
+  margin-bottom: 8px;
+}
+.vicon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.vicon svg { width: 15px; height: 15px; stroke: var(--cream); stroke-width: 1.8; fill: none; }
+.vname { font-size: 13px; font-weight: 500; color: var(--cream); }
+.vwhat { font-size: 11px; color: var(--muted); }
+.vgo {
+  margin-left: auto;
+  font-size: 11px; font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── Nav sheet ── */
+.overlay {
+  display: none;
+  position: fixed; inset: 0;
+  z-index: 200;
+  background: rgba(0,0,0,0.55);
+  align-items: flex-end;
+  justify-content: center;
+}
+.overlay.on { display: flex; }
+.sheet {
+  background: var(--bg2);
+  border-radius: 18px 18px 0 0;
+  padding: 22px 16px 38px;
+  width: 100%; max-width: 430px;
+}
+.sheet-bar { width: 34px; height: 3px; background: rgba(255,255,255,0.18); border-radius: 2px; margin: 0 auto 18px; }
+.sheet-lbl { font-size: 10px; font-weight: 600; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; margin-bottom: 5px; }
+.sheet-name { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 500; color: var(--cream); margin-bottom: 18px; }
+.nopt {
+  display: flex; align-items: center; gap: 13px;
+  background: var(--bg3);
+  border: 0.5px solid var(--border);
+  border-radius: var(--rad);
+  padding: 13px 14px;
+  text-decoration: none;
+  margin-bottom: 9px;
+  cursor: pointer;
+}
+.nopt-icon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.nopt-icon svg { width: 17px; height: 17px; stroke: #fff; stroke-width: 2; fill: none; }
+.nopt-name { font-size: 13px; font-weight: 500; color: var(--cream); }
+.nopt-sub  { font-size: 11px; color: var(--muted); }
+.nopt-arr  { margin-left: auto; }
+.nopt-arr svg { width: 15px; height: 15px; stroke: var(--muted); stroke-width: 2; fill: none; }
+.sheet-cancel { width: 100%; background: none; border: none; color: var(--muted); font-size: 13px; padding: 13px; cursor: pointer; margin-top: 3px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HOME -->
+  <div class="screen active" id="s-home">
+    <div class="hero">
+      <img class="bg" src="https://images.squarespace-cdn.com/content/v1/69cb9d5f8c11eb472c8992b7/21d84c18-f85f-4d97-8ba0-4328a2662629/KuArts+KV2_KV+-+horizontal+copy.png" alt="">
+      <div class="hero-fade"></div>
+      <div class="hero-logo">
+        <img src="https://images.squarespace-cdn.com/content/69cb9d5f8c11eb472c8992b7/75bd982c-ca18-4867-944a-55318ac85b4b/FULL+LOGO+1.png?content-type=image%2Fpng" alt="KuArts 2026">
+      </div>
+    </div>
+
+    <div class="sec" id="sec-now" style="display:none">
+      <div class="sec-title"><span class="pulse"></span>Happening now</div>
+      <div id="list-now"></div>
+    </div>
+
+    <div class="sec" id="sec-next" style="display:none">
+      <div class="sec-title">Coming up next</div>
+      <div class="car-wrap"><div class="car-track" id="car"></div></div>
+    </div>
+
+    <div class="sec"><div class="sec-title">Programme</div></div>
+    <div class="tiles">
+      <div class="tile" data-cat="music">
+        <svg viewBox="0 0 24 24" style="stroke:#E8593C"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <div class="tile-name">Music</div><div class="tile-sub">Live performances</div>
+      </div>
+      <div class="tile" data-cat="theatre">
+        <svg viewBox="0 0 24 24" style="stroke:#3B8BD4"><path d="M2 10s3-3 3-8h14c0 5 3 8 3 8"/><path d="M12 12v10"/><path d="M2 20h20"/></svg>
+        <div class="tile-name">Theatre</div><div class="tile-sub">Productions</div>
+      </div>
+      <div class="tile" data-cat="workshop">
+        <svg viewBox="0 0 24 24" style="stroke:#534AB7"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+        <div class="tile-name">Workshops</div><div class="tile-sub">Sessions &amp; talks</div>
+      </div>
+      <div class="tile" data-cat="events">
+        <svg viewBox="0 0 24 24" style="stroke:#2D7A4F"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+        <div class="tile-name">Events</div><div class="tile-sub">Exhibition, film, bazaar</div>
+      </div>
+    </div>
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- PROGRAMME -->
+  <div class="screen" id="s-prog">
+    <div class="ph">
+      <div class="ph-title">Programme</div>
+      <div class="ph-sub">12 – 14 June 2026 · Kuantan</div>
+      <div class="pills" id="day-pills"></div>
+      <div class="pills" id="cat-pills"></div>
+    </div>
+    <div id="prog-list"></div>
+  </div>
+
+  <!-- DETAIL -->
+  <div class="screen" id="s-detail">
+    <div class="dh">
+      <img id="d-img" src="" alt="">
+      <div class="dh-fade"></div>
+      <button class="dh-back" id="btn-back">
+        <svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        Back
+      </button>
+      <div class="dh-info">
+        <span class="d-badge" id="d-badge"></span>
+        <div class="d-title" id="d-title"></div>
+      </div>
+    </div>
+    <div class="d-body">
+      <div class="chips">
+        <div class="chip">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <div><div class="chip-lbl">Time</div><div class="chip-val" id="d-time"></div></div>
+        </div>
+        <div class="chip">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <div><div class="chip-lbl">Date</div><div class="chip-val" id="d-date"></div></div>
+        </div>
+        <div class="chip wide">
+          <svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+          <div><div class="chip-lbl">Venue</div><div class="chip-val" id="d-venue"></div></div>
+        </div>
+      </div>
+      <div class="acts">
+        <a id="d-book" href="#" target="_blank" class="btn-book" style="display:none">Book your seat →</a>
+        <button class="btn-nav" id="btn-takeme">Take me there!</button>
+      </div>
+      <div class="d-desc" id="d-desc"></div>
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div class="screen" id="s-map">
+    <div class="mh">
+      <div class="mh-title">Map</div>
+      <div class="mh-sub">Jalan Besar, Kuantan</div>
+    </div>
+    <div id="map"></div>
+    <div style="padding:0 16px 10px;margin-top:4px">
+      <div class="sec-title">Festival Venues</div>
+    </div>
+    <div class="vlst" id="venue-list"></div>
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- Bottom nav -->
+  <nav>
+    <button class="nb on"  id="nb-home"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Home</span></button>
+    <button class="nb"     id="nb-prog"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Programme</span></button>
+    <button class="nb"     id="nb-map" ><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg><span>Map</span></button>
+  </nav>
+
+  <!-- Nav sheet -->
+  <div class="overlay" id="sheet-overlay">
+    <div class="sheet">
+      <div class="sheet-bar"></div>
+      <div class="sheet-lbl">Navigate to</div>
+      <div class="sheet-name" id="sheet-vname"></div>
+      <a id="sheet-gmaps" href="#" target="_blank" class="nopt">
+        <div class="nopt-icon" style="background:#4285F4"><svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div><div class="nopt-name">Google Maps</div><div class="nopt-sub">Opens in Google Maps</div></div>
+        <div class="nopt-arr"><svg viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></div>
+      </a>
+      <a id="sheet-waze" href="#" target="_blank" class="nopt">
+        <div class="nopt-icon" style="background:#1E8449"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+        <div><div class="nopt-name">Waze</div><div class="nopt-sub">Opens in Waze</div></div>
+        <div class="nopt-arr"><svg viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg></div>
+      </a>
+      <button class="sheet-cancel" id="sheet-cancel">Cancel</button>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ─── Config ───────────────────────────────────────────────────────────────────
+var CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQpafaAud3onx5oGxS2DDX5p2o2xXhSaUvT8dxxJnBfmlQNR2S1gJse-NIyW8nRt1FWXtHMEoSz6L7s/pub?output=csv';
+
+var COLORS = {
+  music:'#E8593C', theatre:'#3B8BD4', workshop:'#534AB7',
+  softsands:'#2D7A4F', filamen:'#185FA5', film:'#7A5C00',
+  bazaar:'#BA7517', special:'#993C1D'
+};
+var TAGS = {
+  music:'Music', theatre:'Theatre', workshop:'Workshop',
+  softsands:'Exhibition', filamen:'Proj. Mapping', film:'Film',
+  bazaar:'Bazaar', special:'Special'
+};
+var DAY_LONG = {fri:'Friday 12 June', sat:'Saturday 13 June', sun:'Sunday 14 June'};
+var DAY_SHORT = {fri:'Fri 12', sat:'Sat 13', sun:'Sun 14'};
+
+var VENUES = [
+  {name:'Hock Bee',       what:'Music · Exhibition · Workshops',     lat:3.8064733, lng:103.3289383, col:'#E8593C'},
+  {name:'Studio Belatuk', what:'Theatre · Film · Workshops',          lat:3.8069618, lng:103.3294778, col:'#3B8BD4'},
+  {name:'Blok56',         what:'Beleber · Proj. Mapping',             lat:3.8088624, lng:103.3304055, col:'#534AB7'},
+  {name:'KHATAM',         what:'Proj. Mapping',                        lat:3.808034,  lng:103.3298609, col:'#185FA5'},
+  {name:'Lorong Seni',    what:'Pasar Sera Bazaar',                    lat:3.8065,    lng:103.3275,    col:'#BA7517'},
+  {name:'Jalan Besar',    what:'Warung Terang',                        lat:3.8065,    lng:103.328,     col:'#185FA5'}
+];
+
+// ─── State ────────────────────────────────────────────────────────────────────
+var events = [];
+var dayFilter = 'all';
+var catFilter = 'all';
+var fromScreen = 'home';
+var navLat = 0, navLng = 0, navName = '';
+var leafMap = null;
+
+// ─── CSV parser (handles multiline quoted fields) ─────────────────────────────
+function parseCSV(raw) {
+  var out = [], pos = 0, N = raw.length;
+
+  function field() {
+    if (raw[pos] === '"') {
+      pos++;
+      var v = '';
+      while (pos < N) {
+        if (raw[pos] === '"' && raw[pos+1] === '"') { v += '"'; pos += 2; }
+        else if (raw[pos] === '"') { pos++; break; }
+        else { v += raw[pos++]; }
+      }
+      return v;
+    }
+    var s = pos;
+    while (pos < N && raw[pos] !== ',' && raw[pos] !== '\n' && raw[pos] !== '\r') pos++;
+    return raw.slice(s, pos).trim();
+  }
+
+  function row() {
+    var r = [];
+    while (pos < N && raw[pos] !== '\n' && raw[pos] !== '\r') {
+      r.push(field());
+      if (raw[pos] === ',') pos++;
+    }
+    while (pos < N && (raw[pos] === '\n' || raw[pos] === '\r')) pos++;
+    return r;
+  }
+
+  var hdrs = row();
+  while (pos < N) {
+    var r = row();
+    if (!r.length || (r.length === 1 && !r[0])) continue;
+    var o = {};
+    hdrs.forEach(function(h,i){ o[h] = r[i] || ''; });
+    out.push(o);
+  }
+  return out;
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function fmt(dt) {
+  if (!dt) return '';
+  var t = dt.indexOf(' ') > -1 ? dt.split(' ')[1] : dt;
+  var h = parseInt(t), m = t.split(':')[1] || '00';
+  var s = h >= 12 ? 'pm' : 'am';
+  if (h > 12) h -= 12; if (!h) h = 12;
+  return m === '00' ? h+s : h+':'+m+s;
+}
+function col(type)  { return COLORS[type] || COLORS.special; }
+function tag(type)  { return TAGS[type]   || 'Event'; }
+
+function makeRow(ev, live) {
+  var d = document.createElement('div');
+  d.className = 'erow' + (live ? ' live' : '');
+
+  var thumb = document.createElement('div');
+  thumb.className = 'ethumb';
+  var img = document.createElement('img');
+  img.alt = '';
+  img.src = (ev['Image URL'] || '').trim();
+  img.onerror = function(){ this.style.display='none'; thumb.style.background=col(ev.Type); };
+  thumb.appendChild(img);
+
+  var info = document.createElement('div');
+  info.className = 'einfo';
+  info.innerHTML = '<div class="etitle">'+ev.Title+'</div><div class="emeta">'+fmt(ev['Start DateTime'])+' · '+ev.Venue+'</div>';
+
+  var t = document.createElement('span');
+  t.className = 'etag' + (live ? ' live' : '');
+  t.textContent = live ? 'Live' : tag(ev.Type);
+
+  d.appendChild(thumb); d.appendChild(info); d.appendChild(t);
+  d.addEventListener('click', function(){ openDetail(ev); });
+  return d;
+}
+
+// ─── Home ─────────────────────────────────────────────────────────────────────
+function buildHome() {
+  var now = new Date();
+
+  // Happening now
+  var nowEvs = events.filter(function(e){
+    return new Date(e['Start DateTime']) <= now && new Date(e['End DateTime']) >= now;
+  });
+  if (nowEvs.length) {
+    document.getElementById('sec-now').style.display = '';
+    var nl = document.getElementById('list-now');
+    nl.innerHTML = '';
+    nowEvs.forEach(function(e){ nl.appendChild(makeRow(e, true)); });
+  }
+
+  // Coming up next
+  var next = events.filter(function(e){ return new Date(e['Start DateTime']) > now; })
+    .sort(function(a,b){ return new Date(a['Start DateTime'])-new Date(b['Start DateTime']); });
+  if (next.length) {
+    document.getElementById('sec-next').style.display = '';
+    var car = document.getElementById('car');
+    car.innerHTML = '';
+    next.slice(0,8).forEach(function(e){
+      var c = document.createElement('div');
+      c.className = 'car-card';
+      c.style.background = col(e.Type);
+      c.innerHTML = '<span class="cc-day">'+( DAY_SHORT[e.Day]||e.Day )+'</span>'
+        +'<span class="cc-tag">'+e.Category.toUpperCase()+'</span>'
+        +'<div class="cc-title">'+e.Title+'</div>'
+        +'<div class="cc-venue">'+e.Venue+'</div>'
+        +'<div class="cc-time">'+fmt(e['Start DateTime'])+'</div>';
+      c.addEventListener('click', function(){ openDetail(e); });
+      car.appendChild(c);
+    });
+  }
+}
+
+// ─── Programme ────────────────────────────────────────────────────────────────
+function buildPills() {
+  var dp = document.getElementById('day-pills');
+  var cp = document.getElementById('cat-pills');
+  dp.innerHTML = ''; cp.innerHTML = '';
+
+  [['all','All Days'],['fri','Fri 12'],['sat','Sat 13'],['sun','Sun 14']].forEach(function(x){
+    var p = document.createElement('div');
+    p.className = 'pill' + (x[0]===dayFilter ? ' pd' : '');
+    p.textContent = x[1];
+    p.addEventListener('click', function(){ dayFilter=x[0]; buildPills(); renderProg(); });
+    dp.appendChild(p);
+  });
+
+  [['all','All'],['music','Music'],['theatre','Theatre'],['workshop','Workshops'],['events','Events']].forEach(function(x){
+    var p = document.createElement('div');
+    p.className = 'pill' + (x[0]===catFilter ? ' pc' : '');
+    p.textContent = x[1];
+    p.addEventListener('click', function(){ catFilter=x[0]; buildPills(); renderProg(); });
+    cp.appendChild(p);
+  });
+}
+
+function renderProg() {
+  var el = document.getElementById('prog-list');
+  el.innerHTML = '';
+  var list = events
+    .filter(function(e){ return (dayFilter==='all'||e.Day===dayFilter) && (catFilter==='all'||e.Category===catFilter); })
+    .sort(function(a,b){ return new Date(a['Start DateTime'])-new Date(b['Start DateTime']); });
+
+  if (!list.length) {
+    el.innerHTML = '<p style="text-align:center;padding:40px 16px;color:var(--muted);font-size:13px;">No events for this filter.</p>';
+    return;
+  }
+  var lastDay = '';
+  list.forEach(function(e){
+    if (e.Day !== lastDay) {
+      var lbl = document.createElement('div');
+      lbl.className = 'day-lbl';
+      lbl.textContent = DAY_LONG[e.Day] || e.Day;
+      el.appendChild(lbl);
+      lastDay = e.Day;
+    }
+    var w = document.createElement('div');
+    w.className = 'elist';
+    w.appendChild(makeRow(e, false));
+    el.appendChild(w);
+  });
+}
+
+// ─── Detail ───────────────────────────────────────────────────────────────────
+function openDetail(ev) {
+  fromScreen = document.querySelector('.screen.active').id;
+
+  document.getElementById('d-img').src = (ev['Image URL']||'').trim();
+  var badge = document.getElementById('d-badge');
+  badge.textContent = tag(ev.Type);
+  badge.style.background = col(ev.Type);
+  document.getElementById('d-title').textContent = ev.Title;
+  document.getElementById('d-time').textContent  = fmt(ev['Start DateTime'])+' – '+fmt(ev['End DateTime']);
+  document.getElementById('d-date').textContent  = DAY_LONG[ev.Day]||ev.Day;
+  document.getElementById('d-venue').textContent = ev.Venue;
+  document.getElementById('d-desc').innerHTML    = (ev.Description||'').replace(/\r\n|\r|\n/g,'<br>');
+
+  var book = document.getElementById('d-book');
+  if (ev['Booking URL'] && ev['Booking URL'].trim()) {
+    book.href = ev['Booking URL']; book.style.display = 'flex';
+  } else {
+    book.style.display = 'none';
+  }
+
+  // nav coords
+  navName = ev.Venue;
+  var v = null;
+  for (var i=0; i<VENUES.length; i++) {
+    if (ev.Venue && ev.Venue.indexOf(VENUES[i].name) > -1) { v = VENUES[i]; break; }
+  }
+  navLat = v ? v.lat : 3.8065;
+  navLng = v ? v.lng : 103.329;
+
+  go('detail', true);
+}
+
+// ─── Map ──────────────────────────────────────────────────────────────────────
+function buildMap() {
+  if (leafMap) return;
+  leafMap = L.map('map', {center:[3.8072,103.3293], zoom:15, zoomControl:false});
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+    {attribution:'© OpenStreetMap © CARTO', maxZoom:19}).addTo(leafMap);
+  VENUES.forEach(function(v){
+    var ic = L.divIcon({className:'',
+      html:'<div style="width:13px;height:13px;border-radius:50%;background:'+v.col+';border:2px solid rgba(255,255,255,0.75);box-shadow:0 1px 4px rgba(0,0,0,0.5)"></div>',
+      iconSize:[13,13], iconAnchor:[6,6], popupAnchor:[0,-8]});
+    L.marker([v.lat,v.lng],{icon:ic}).addTo(leafMap)
+      .bindPopup('<b style="color:#111">'+v.name+'</b><br><small style="color:#555">'+v.what+'</small>');
+  });
+
+  var vl = document.getElementById('venue-list');
+  VENUES.forEach(function(v){
+    var r = document.createElement('div');
+    r.className = 'vrow';
+    r.innerHTML = '<div class="vicon" style="background:'+v.col+'">'
+      +'<svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>'
+      +'</div>'
+      +'<div><div class="vname">'+v.name+'</div><div class="vwhat">'+v.what+'</div></div>'
+      +'<button class="vgo" style="background:'+v.col+'22;color:'+v.col+';border:0.5px solid '+v.col+'55">Go →</button>';
+    r.querySelector('.vgo').addEventListener('click', function(e){
+      e.stopPropagation();
+      navName=v.name; navLat=v.lat; navLng=v.lng;
+      openSheet();
+    });
+    vl.appendChild(r);
+  });
+}
+
+// ─── Sheet ────────────────────────────────────────────────────────────────────
+function openSheet() {
+  document.getElementById('sheet-vname').textContent = navName;
+  document.getElementById('sheet-gmaps').href = 'https://www.google.com/maps/dir/?api=1&destination='+navLat+','+navLng;
+  document.getElementById('sheet-waze').href  = 'https://waze.com/ul?ll='+navLat+','+navLng+'&navigate=yes';
+  document.getElementById('sheet-overlay').classList.add('on');
+}
+function closeSheet() {
+  document.getElementById('sheet-overlay').classList.remove('on');
+}
+
+// ─── Navigation ───────────────────────────────────────────────────────────────
+function go(id, skipNav) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('s-'+id).classList.add('active');
+  if (!skipNav) {
+    document.querySelectorAll('.nb').forEach(function(b){ b.classList.remove('on'); });
+    var nb = document.getElementById('nb-'+id);
+    if (nb) nb.classList.add('on');
+  }
+  if (id==='map') buildMap();
+}
+
+// ─── Wire up ──────────────────────────────────────────────────────────────────
+document.getElementById('nb-home').addEventListener('click', function(){ go('home'); });
+document.getElementById('nb-prog').addEventListener('click', function(){ go('prog'); buildPills(); renderProg(); });
+document.getElementById('nb-map' ).addEventListener('click', function(){ go('map'); });
+
+document.getElementById('btn-back').addEventListener('click', function(){ go(fromScreen.replace('s-',''), true); });
+document.getElementById('btn-takeme').addEventListener('click', openSheet);
+document.getElementById('sheet-cancel').addEventListener('click', closeSheet);
+document.getElementById('sheet-overlay').addEventListener('click', function(e){ if(e.target===this) closeSheet(); });
+
+document.querySelectorAll('.tile').forEach(function(t){
+  t.addEventListener('click', function(){
+    catFilter = this.dataset.cat;
+    dayFilter = 'all';
+    go('prog');
+    buildPills();
+    renderProg();
+  });
+});
+
+// ─── Load ─────────────────────────────────────────────────────────────────────
+fetch(CSV)
+  .then(function(r){ return r.text(); })
+  .then(function(t){
+    events = parseCSV(t);
+    buildHome();
+    buildPills();
+    renderProg();
+  })
+  .catch(function(){ console.warn('CSV load failed'); });
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+</script>
+</body>
+</html>
