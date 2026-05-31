@@ -42,6 +42,20 @@ html, body {
   overflow: hidden;
 }
 
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url('https://images.squarespace-cdn.com/content/69cb9d5f8c11eb472c8992b7/21d84c18-f85f-4d97-8ba0-4328a2662629/KuArts+KV2_KV+-+horizontal+copy.png?content-type=image%2Fpng');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.07;
+  z-index: 0;
+  pointer-events: none;
+}
+
+#app { position: relative; z-index: 1; }
+
 #app {
   max-width: 430px;
   margin: 0 auto;
