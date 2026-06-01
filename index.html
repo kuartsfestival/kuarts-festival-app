@@ -209,6 +209,78 @@ nav {
 }
 .etag.live { background: rgba(232,89,60,0.15); color: var(--coral); border: 0.5px solid rgba(232,89,60,0.3); }
 
+/* ── Programme card grid ── */
+.prog-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 16px;
+  margin-bottom: 4px;
+}
+.ecard {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--rad);
+  overflow: hidden;
+  cursor: pointer;
+  transition: background .12s;
+  display: flex;
+  flex-direction: column;
+}
+.ecard:active { background: var(--bg3); }
+.ecard.live { border-color: rgba(232,89,60,0.3); }
+.ecard-thumb {
+  width: 100%;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  background: var(--bg3);
+  flex-shrink: 0;
+}
+.ecard-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.ecard-body {
+  padding: 9px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+.ecard-pill {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 2px 7px;
+  border-radius: 20px;
+  align-self: flex-start;
+  color: #F2EDD7;
+}
+.ecard-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cream);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ecard-time {
+  font-size: 11px;
+  color: var(--muted);
+}
+.ecard-venue {
+  font-size: 10px;
+  color: var(--muted);
+  opacity: 0.75;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* carousel */
 .car-wrap { overflow: hidden; margin: 0 -16px; padding: 0 16px; }
 .car-track {
@@ -999,6 +1071,51 @@ function makeRow(ev, live) {
   return d;
 }
 
+function makeCard(ev) {
+  var d = document.createElement('div');
+  d.className = 'ecard';
+
+  // Poster
+  var thumb = document.createElement('div');
+  thumb.className = 'ecard-thumb';
+  var img = document.createElement('img');
+  img.alt = '';
+  img.src = (ev['Image URL'] || '').trim();
+  img.onerror = function(){ this.style.display='none'; thumb.style.background=col(ev.Type); };
+  thumb.appendChild(img);
+
+  // Body
+  var body = document.createElement('div');
+  body.className = 'ecard-body';
+
+  var pill = document.createElement('span');
+  pill.className = 'ecard-pill';
+  pill.textContent = tag(ev.Type);
+  pill.style.background = col(ev.Type);
+
+  var title = document.createElement('div');
+  title.className = 'ecard-title';
+  title.textContent = ev.Title;
+
+  var time = document.createElement('div');
+  time.className = 'ecard-time';
+  time.textContent = fmt(ev['Start DateTime']);
+
+  var venue = document.createElement('div');
+  venue.className = 'ecard-venue';
+  venue.textContent = ev.Venue;
+
+  body.appendChild(pill);
+  body.appendChild(title);
+  body.appendChild(time);
+  body.appendChild(venue);
+
+  d.appendChild(thumb);
+  d.appendChild(body);
+  d.addEventListener('click', function(){ openDetail(ev); });
+  return d;
+}
+
 // ─── Home ─────────────────────────────────────────────────────────────────────
 function buildHome() {
   var now = new Date();
@@ -1071,6 +1188,7 @@ function renderProg() {
     return;
   }
   var lastDay = '';
+  var grid = null;
   list.forEach(function(e){
     if (e.Day !== lastDay) {
       var lbl = document.createElement('div');
@@ -1078,11 +1196,11 @@ function renderProg() {
       lbl.textContent = DAY_LONG[e.Day] || e.Day;
       el.appendChild(lbl);
       lastDay = e.Day;
+      grid = document.createElement('div');
+      grid.className = 'prog-grid';
+      el.appendChild(grid);
     }
-    var w = document.createElement('div');
-    w.className = 'elist';
-    w.appendChild(makeRow(e, false));
-    el.appendChild(w);
+    grid.appendChild(makeCard(e));
   });
 }
 
