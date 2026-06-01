@@ -489,6 +489,12 @@ nav {
   text-align: center;
   display: flex; align-items: center; justify-content: center;
 }
+.btn-book.sold-out {
+  background: rgba(255,255,255,0.08);
+  color: rgba(242,237,215,0.35);
+  cursor: not-allowed;
+  pointer-events: none;
+}
 .btn-nav {
   flex: 1;
   background: transparent;
@@ -876,7 +882,7 @@ nav {
       <a href="https://pahanggo.com/product.html" target="_blank" id="pahanggo-card">
         <div id="pahanggo-inner">
           <div id="pahanggo-left">
-            <div id="pahanggo-title">🅿️ Find parking near you</div>
+            <div id="pahanggo-title">🅿️ Street Parking</div>
             <div id="pahanggo-sub">Download PahangGo, the official Pahang parking app</div>
           </div>
           <div id="pahanggo-arrow">→</div>
@@ -951,9 +957,10 @@ var FACILITIES = [
   {
     type: 'parking', label: 'Parking', icon: '🅿️', col: '#4A7FA5',
     items: [
-      {name:'Parking A', lat:3.8049856402439364, lng:103.3281795744436},
-      {name:'Parking B', lat:3.8037545429453288, lng:103.32447812633464},
-      {name:'Parking C', lat:3.8049307749200447, lng:103.32820764611456}
+      {name:'Public Parking A', lat:3.806545312306613,  lng:103.32750690327775},
+      {name:'Public Parking B', lat:3.808087896045654,  lng:103.32899209667676},
+      {name:'Public Parking C', lat:3.8047977685635015, lng:103.3282301380202},
+      {name:'Public Parking D', lat:3.8027688657345533, lng:103.32576140164215}
     ]
   },
   {
@@ -1269,9 +1276,17 @@ function openDetail(ev) {
     // For soft soft sands: book button, then "Take me there" label, then venue buttons
     } else {
       // Book button if exists
-      if (ev['Booking URL'] && ev['Booking URL'].trim()) {
+      var ssBookingUrl = (ev['Booking URL'] || '').trim();
+      if (ssBookingUrl === 'sold-out') {
         var book = document.createElement('a');
-        book.href = ev['Booking URL'];
+        book.className = 'btn-book sold-out';
+        book.textContent = 'Fully Booked';
+        book.style.display = 'flex';
+        book.style.marginBottom = '12px';
+        actsEl.appendChild(book);
+      } else if (ssBookingUrl) {
+        var book = document.createElement('a');
+        book.href = ssBookingUrl;
         book.target = '_blank';
         book.className = 'btn-book';
         book.style.display = 'flex';
@@ -1307,12 +1322,18 @@ function openDetail(ev) {
     var book = document.createElement('a');
     book.id = 'd-book';
     book.target = '_blank';
-    book.className = 'btn-book';
-    if (ev['Booking URL'] && ev['Booking URL'].trim()) {
-      book.href = ev['Booking URL'];
+    var bookingUrl = (ev['Booking URL'] || '').trim();
+    if (bookingUrl === 'sold-out') {
+      book.className = 'btn-book sold-out';
+      book.textContent = 'Fully Booked';
+      book.style.display = 'flex';
+    } else if (bookingUrl) {
+      book.className = 'btn-book';
+      book.href = bookingUrl;
       book.style.display = 'flex';
       book.textContent = 'Book your seat →';
     } else {
+      book.className = 'btn-book';
       book.style.display = 'none';
     }
     actsEl.appendChild(book);
