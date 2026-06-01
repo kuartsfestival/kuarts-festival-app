@@ -400,7 +400,8 @@ nav {
   margin-bottom: 14px;
 }
 .acts.multi-venue {
-  flex-direction: column;
+  flex-direction: column !important;
+  align-items: stretch !important;
   gap: 8px;
 }
 .btn-book {
@@ -884,7 +885,7 @@ function openDetail(ev) {
     if (venues[0].bookingUrl) {
       venues.forEach(function(mv) {
         var row = document.createElement('div');
-        row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:stretch;width:100%;';
+        row.style.cssText = 'display:flex;gap:8px;align-items:stretch;width:100%;';
 
         var btn = document.createElement('a');
         btn.href = mv.bookingUrl;
