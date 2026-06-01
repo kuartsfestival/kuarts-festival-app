@@ -875,7 +875,7 @@ function openDetail(ev) {
     var venues = MULTI_VENUE_EVENTS[multiKey];
     venues.forEach(function(mv) {
       var row = document.createElement('div');
-      row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:center;';
+      row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:stretch;width:100%;';
 
       // Book button per venue (only for immersiox which has per-venue booking)
       if (mv.bookingUrl) {
@@ -884,7 +884,10 @@ function openDetail(ev) {
         btn.target = '_blank';
         btn.className = 'btn-book';
         btn.style.display = 'flex';
-        btn.textContent = mv.name + ' →';
+        btn.style.flexDirection = 'column';
+        btn.style.lineHeight = '1.2';
+        btn.style.textAlign = 'center';
+        btn.innerHTML = 'Book Your Spot<br><span style="font-size:0.8em;opacity:0.85">' + mv.name + '</span>';
         row.appendChild(btn);
       }
 
