@@ -399,6 +399,10 @@ nav {
   gap: 9px;
   margin-bottom: 14px;
 }
+.acts.multi-venue {
+  flex-direction: column;
+  gap: 8px;
+}
 .btn-book {
   flex: 1;
   background: var(--coral);
@@ -870,9 +874,11 @@ function openDetail(ev) {
   var actsEl = document.getElementById('d-acts');
   // Clear previous dynamic buttons
   actsEl.innerHTML = '';
+  actsEl.classList.remove('multi-venue');
 
   if (multiKey) {
     var venues = MULTI_VENUE_EVENTS[multiKey];
+    actsEl.classList.add('multi-venue');
 
     // For IMMERSIOx: two rows of [Book Your Spot · Venue] + [Take me there!]
     if (venues[0].bookingUrl) {
