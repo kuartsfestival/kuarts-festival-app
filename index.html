@@ -873,12 +873,13 @@ function openDetail(ev) {
 
   if (multiKey) {
     var venues = MULTI_VENUE_EVENTS[multiKey];
-    venues.forEach(function(mv) {
-      var row = document.createElement('div');
-      row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:stretch;width:100%;';
 
-      // Book button per venue (only for immersiox which has per-venue booking)
-      if (mv.bookingUrl) {
+    // For IMMERSIOx: two rows of [Book Your Spot · Venue] + [Take me there!]
+    if (venues[0].bookingUrl) {
+      venues.forEach(function(mv) {
+        var row = document.createElement('div');
+        row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:stretch;width:100%;';
+
         var btn = document.createElement('a');
         btn.href = mv.bookingUrl;
         btn.target = '_blank';
@@ -889,33 +890,56 @@ function openDetail(ev) {
         btn.style.textAlign = 'center';
         btn.innerHTML = 'Book Your Spot<br><span style="font-size:0.8em;opacity:0.85">' + mv.name + '</span>';
         row.appendChild(btn);
+
+        var nav = document.createElement('button');
+        nav.className = 'btn-nav';
+        nav.style.flex = '1';
+        nav.textContent = 'Take me there!';
+        (function(lat, lng, name) {
+          nav.addEventListener('click', function() {
+            navName = name; navLat = lat; navLng = lng;
+            openSheet();
+          });
+        })(mv.lat, mv.lng, mv.name);
+        row.appendChild(nav);
+
+        actsEl.appendChild(row);
+      });
+
+    // For soft soft sands: book button, then "Take me there" label, then venue buttons
+    } else {
+      // Book button if exists
+      if (ev['Booking URL'] && ev['Booking URL'].trim()) {
+        var book = document.createElement('a');
+        book.href = ev['Booking URL'];
+        book.target = '_blank';
+        book.className = 'btn-book';
+        book.style.display = 'flex';
+        book.style.marginBottom = '12px';
+        book.textContent = 'Book your spot →';
+        actsEl.appendChild(book);
       }
 
-      // Take me there button
-      var nav = document.createElement('button');
-      nav.className = 'btn-nav';
-      nav.textContent = mv.bookingUrl ? 'Take me there!' : mv.name;
-      nav.style.flex = '1';
-      (function(lat, lng, name) {
-        nav.addEventListener('click', function() {
-          navName = name; navLat = lat; navLng = lng;
-          openSheet();
-        });
-      })(mv.lat, mv.lng, mv.name);
-      row.appendChild(nav);
+      // "Take me there" label
+      var lbl = document.createElement('div');
+      lbl.textContent = 'Take me there';
+      lbl.style.cssText = 'font-size:12px;font-weight:600;color:var(--cream);opacity:0.6;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;';
+      actsEl.appendChild(lbl);
 
-      actsEl.appendChild(row);
-    });
-
-    // For soft soft sands: single book button above if it has a booking URL
-    if (!venues[0].bookingUrl && ev['Booking URL'] && ev['Booking URL'].trim()) {
-      var book = document.createElement('a');
-      book.href = ev['Booking URL'];
-      book.target = '_blank';
-      book.className = 'btn-book';
-      book.style.display = 'flex';
-      book.textContent = 'Book your seat →';
-      actsEl.insertBefore(book, actsEl.firstChild);
+      // One button per venue
+      venues.forEach(function(mv) {
+        var nav = document.createElement('button');
+        nav.className = 'btn-nav';
+        nav.style.cssText = 'width:100%;margin-bottom:8px;';
+        nav.textContent = mv.name;
+        (function(lat, lng, name) {
+          nav.addEventListener('click', function() {
+            navName = name; navLat = lat; navLng = lng;
+            openSheet();
+          });
+        })(mv.lat, mv.lng, mv.name);
+        actsEl.appendChild(nav);
+      });
     }
 
   } else {
