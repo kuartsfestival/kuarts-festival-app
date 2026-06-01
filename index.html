@@ -463,6 +463,85 @@ nav {
   flex-shrink: 0;
 }
 
+/* ── PahangGo card ── */
+#pahanggo-card {
+  display: block;
+  text-decoration: none;
+  background: linear-gradient(135deg, #1a3a5c, #0f2540);
+  border: 1px solid rgba(74,127,165,0.4);
+  border-radius: 16px;
+  padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+#pahanggo-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+#pahanggo-left { flex: 1; }
+#pahanggo-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cream);
+  margin-bottom: 4px;
+}
+#pahanggo-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--cream);
+  opacity: 0.65;
+  line-height: 1.4;
+}
+#pahanggo-arrow {
+  font-size: 20px;
+  color: #4A7FA5;
+  flex-shrink: 0;
+}
+
+/* ── Facility grid ── */
+#facility-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 16px;
+}
+.fac-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 14px;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.fac-card-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+.fac-card-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cream);
+  margin-bottom: 2px;
+}
+.fac-card-count {
+  font-size: 11px;
+  color: var(--muted);
+}
+.fac-card-arrow {
+  font-size: 16px;
+  float: right;
+  margin-top: -28px;
+}
+.fac-sub-list {
+  display: none;
+  grid-column: 1 / -1;
+  background: var(--card);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
 /* ── Nav sheet ── */
 .overlay {
   display: none;
@@ -719,9 +798,23 @@ nav {
     </div>
     <div class="vlst" id="venue-list"></div>
     <div style="padding:0 16px 10px;margin-top:4px">
+      <div class="sec-title">Parking</div>
+    </div>
+    <div style="padding:0 16px 10px;">
+      <a href="https://pahanggo.com/product.html" target="_blank" id="pahanggo-card">
+        <div id="pahanggo-inner">
+          <div id="pahanggo-left">
+            <div id="pahanggo-title">🅿️ Find parking near you</div>
+            <div id="pahanggo-sub">Download PahangGo, the official Pahang parking app</div>
+          </div>
+          <div id="pahanggo-arrow">→</div>
+        </div>
+      </a>
+    </div>
+    <div style="padding:0 16px 10px;margin-top:4px">
       <div class="sec-title">Facilities</div>
     </div>
-    <div class="vlst" id="facility-list"></div>
+    <div id="facility-list"></div>
     <div style="height:20px"></div>
   </div>
 
@@ -1180,22 +1273,22 @@ function buildMap() {
 
   // ── Facilities list ──
   var fl = document.getElementById('facility-list');
-  FACILITIES.forEach(function(f) {
-    // Group header row (collapsible)
-    var header = document.createElement('div');
-    header.className = 'vrow';
-    header.style.cursor = 'pointer';
-    header.innerHTML = '<div class="vicon" style="background:'+f.col+';font-size:14px;display:flex;align-items:center;justify-content:center;">'+f.icon+'</div>'
-      +'<div><div class="vname">'+f.label+'</div><div class="vwhat">'+f.items.length+' location'+(f.items.length>1?'s':'')+'</div></div>'
-      +'<span class="fac-arrow" style="color:'+f.col+';font-size:18px;margin-left:auto;padding-right:4px;">›</span>';
+  FACILITIES.forEach(function(f, idx) {
+    // Card
+    var card = document.createElement('div');
+    card.className = 'fac-card';
+    card.style.borderTop = '3px solid ' + f.col;
+    card.innerHTML = '<div class="fac-card-icon">'+f.icon+'</div>'
+      +'<div class="fac-card-label">'+f.label+'</div>'
+      +'<div class="fac-card-count">'+f.items.length+' location'+(f.items.length>1?'s':'')+'</div>'
+      +'<div class="fac-card-arrow" style="color:'+f.col+'">›</div>';
 
-    // Sub-list (hidden by default)
+    // Sub-list (spans full width)
     var sub = document.createElement('div');
-    sub.style.display = 'none';
+    sub.className = 'fac-sub-list';
     f.items.forEach(function(item) {
       var sr = document.createElement('div');
       sr.className = 'vrow';
-      sr.style.paddingLeft = '16px';
       sr.innerHTML = '<div class="vicon" style="background:'+f.col+'44;border:1px solid '+f.col+'66;font-size:12px;display:flex;align-items:center;justify-content:center;">'+f.icon+'</div>'
         +'<div><div class="vname">'+item.name+'</div></div>'
         +'<button class="vgo" style="background:'+f.col+'22;color:'+f.col+';border:0.5px solid '+f.col+'55">Go →</button>';
@@ -1209,14 +1302,17 @@ function buildMap() {
       sub.appendChild(sr);
     });
 
-    // Toggle on header click
-    header.addEventListener('click', function() {
-      var open = sub.style.display !== 'none';
+    // Toggle on card click
+    card.addEventListener('click', function() {
+      var open = sub.style.display === 'block';
+      // Close all other sub-lists first
+      fl.querySelectorAll('.fac-sub-list').forEach(function(s){ s.style.display = 'none'; });
+      fl.querySelectorAll('.fac-card-arrow').forEach(function(a){ a.textContent = '›'; });
       sub.style.display = open ? 'none' : 'block';
-      header.querySelector('.fac-arrow').textContent = open ? '›' : '⌄';
+      card.querySelector('.fac-card-arrow').textContent = open ? '›' : '⌄';
     });
 
-    fl.appendChild(header);
+    fl.appendChild(card);
     fl.appendChild(sub);
   });
 }
