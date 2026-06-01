@@ -718,6 +718,10 @@ nav {
       <div class="sec-title">Festival Venues</div>
     </div>
     <div class="vlst" id="venue-list"></div>
+    <div style="padding:0 16px 10px;margin-top:4px">
+      <div class="sec-title">Facilities</div>
+    </div>
+    <div class="vlst" id="facility-list"></div>
     <div style="height:20px"></div>
   </div>
 
@@ -776,6 +780,31 @@ var VENUES = [
   {name:'Barn House',      what:'Exhibition',                      lat:3.8083948491948587,  lng:103.33132009293156, col:'#2D7A4F'},
   {name:'Lorong Seni',     what:'Pasar Sera Bazaar',               lat:3.8065,              lng:103.3275,           col:'#BA7517'},
   {name:'Jalan Besar',     what:'Warung Terang',                   lat:3.8065,              lng:103.328,            col:'#185FA5'}
+];
+
+var FACILITIES = [
+  {
+    type: 'parking', label: 'Parking', icon: '🅿️', col: '#4A7FA5',
+    items: [
+      {name:'Parking A', lat:3.8049856402439364, lng:103.3281795744436},
+      {name:'Parking B', lat:3.8037545429453288, lng:103.32447812633464},
+      {name:'Parking C', lat:3.8049307749200447, lng:103.32820764611456}
+    ]
+  },
+  {
+    type: 'surau', label: 'Surau', icon: '🕌', col: '#2D7A4F',
+    items: [
+      {name:'Surau', lat:3.8041505170521415, lng:103.32749361271149}
+    ]
+  },
+  {
+    type: 'toilet', label: 'Toilets', icon: '🚻', col: '#3B8BD4',
+    items: [
+      {name:'Toilet A', lat:3.803243936539444,  lng:103.32664552591606},
+      {name:'Toilet B', lat:3.80566985569529,   lng:103.32651331543795},
+      {name:'Toilet C', lat:3.805939475456733,  lng:103.32890051328133}
+    ]
+  }
 ];
 
 // Multi-venue overrides: events whose title contains these keys get multiple Take me there! buttons
@@ -1107,8 +1136,13 @@ function buildMap() {
     var ic = L.divIcon({className:'',
       html:'<div style="width:13px;height:13px;border-radius:50%;background:'+v.col+';border:2px solid rgba(255,255,255,0.75);box-shadow:0 1px 4px rgba(0,0,0,0.5)"></div>',
       iconSize:[13,13], iconAnchor:[6,6], popupAnchor:[0,-8]});
-    L.marker([v.lat,v.lng],{icon:ic}).addTo(leafMap)
-      .bindPopup('<b style="color:#111">'+v.name+'</b><br><small style="color:#555">'+v.what+'</small>');
+    (function(vv) {
+      L.marker([vv.lat,vv.lng],{icon:ic}).addTo(leafMap)
+        .on('click', function() {
+          navName=vv.name; navLat=vv.lat; navLng=vv.lng;
+          openSheet();
+        });
+    })(v);
   });
 
   var vl = document.getElementById('venue-list');
@@ -1126,6 +1160,64 @@ function buildMap() {
       openSheet();
     });
     vl.appendChild(r);
+  });
+
+  // ── Facility pins on map ──
+  FACILITIES.forEach(function(f) {
+    f.items.forEach(function(item) {
+      var ic = L.divIcon({className:'',
+        html:'<div style="width:26px;height:26px;border-radius:50%;background:'+f.col+';border:2px solid rgba(255,255,255,0.75);box-shadow:0 1px 4px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;font-size:13px;">'+f.icon+'</div>',
+        iconSize:[26,26], iconAnchor:[13,13], popupAnchor:[0,-14]});
+      (function(it) {
+        L.marker([it.lat,it.lng],{icon:ic}).addTo(leafMap)
+          .on('click', function() {
+            navName=it.name; navLat=it.lat; navLng=it.lng;
+            openSheet();
+          });
+      })(item);
+    });
+  });
+
+  // ── Facilities list ──
+  var fl = document.getElementById('facility-list');
+  FACILITIES.forEach(function(f) {
+    // Group header row (collapsible)
+    var header = document.createElement('div');
+    header.className = 'vrow';
+    header.style.cursor = 'pointer';
+    header.innerHTML = '<div class="vicon" style="background:'+f.col+';font-size:14px;display:flex;align-items:center;justify-content:center;">'+f.icon+'</div>'
+      +'<div><div class="vname">'+f.label+'</div><div class="vwhat">'+f.items.length+' location'+(f.items.length>1?'s':'')+'</div></div>'
+      +'<span class="fac-arrow" style="color:'+f.col+';font-size:18px;margin-left:auto;padding-right:4px;">›</span>';
+
+    // Sub-list (hidden by default)
+    var sub = document.createElement('div');
+    sub.style.display = 'none';
+    f.items.forEach(function(item) {
+      var sr = document.createElement('div');
+      sr.className = 'vrow';
+      sr.style.paddingLeft = '16px';
+      sr.innerHTML = '<div class="vicon" style="background:'+f.col+'44;border:1px solid '+f.col+'66;font-size:12px;display:flex;align-items:center;justify-content:center;">'+f.icon+'</div>'
+        +'<div><div class="vname">'+item.name+'</div></div>'
+        +'<button class="vgo" style="background:'+f.col+'22;color:'+f.col+';border:0.5px solid '+f.col+'55">Go →</button>';
+      sr.querySelector('.vgo').addEventListener('click', (function(it){
+        return function(e) {
+          e.stopPropagation();
+          navName = it.name; navLat = it.lat; navLng = it.lng;
+          openSheet();
+        };
+      })(item));
+      sub.appendChild(sr);
+    });
+
+    // Toggle on header click
+    header.addEventListener('click', function() {
+      var open = sub.style.display !== 'none';
+      sub.style.display = open ? 'none' : 'block';
+      header.querySelector('.fac-arrow').textContent = open ? '›' : '⌄';
+    });
+
+    fl.appendChild(header);
+    fl.appendChild(sub);
   });
 }
 
