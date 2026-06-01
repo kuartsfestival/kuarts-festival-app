@@ -581,7 +581,7 @@ nav {
           <div><div class="chip-lbl">Venue</div><div class="chip-val" id="d-venue"></div></div>
         </div>
       </div>
-      <div class="acts">
+      <div class="acts" id="d-acts">
         <a id="d-book" href="#" target="_blank" class="btn-book" style="display:none">Book your seat →</a>
         <button class="btn-nav" id="btn-takeme">Take me there!</button>
       </div>
@@ -651,13 +651,27 @@ var DAY_LONG = {fri:'Friday 12 June', sat:'Saturday 13 June', sun:'Sunday 14 Jun
 var DAY_SHORT = {fri:'Fri 12', sat:'Sat 13', sun:'Sun 14'};
 
 var VENUES = [
-  {name:'Hock Bee',       what:'Music · Exhibition · Workshops',     lat:3.8064733, lng:103.3289383, col:'#E8593C'},
-  {name:'Studio Belatuk', what:'Theatre · Film · Workshops',          lat:3.8069618, lng:103.3294778, col:'#3B8BD4'},
-  {name:'Blok56',         what:'Beleber · Proj. Mapping',             lat:3.8088624, lng:103.3304055, col:'#534AB7'},
-  {name:'KHATAM',         what:'Proj. Mapping',                        lat:3.808034,  lng:103.3298609, col:'#185FA5'},
-  {name:'Lorong Seni',    what:'Pasar Sera Bazaar',                    lat:3.8065,    lng:103.3275,    col:'#BA7517'},
-  {name:'Jalan Besar',    what:'Warung Terang',                        lat:3.8065,    lng:103.328,     col:'#185FA5'}
+  {name:'Hock Bee',        what:'Music · Exhibition · Workshops',  lat:3.8066981046542447,  lng:103.32899193968659, col:'#E8593C'},
+  {name:'Belatuk Social',  what:'Theatre · Film · Workshops',      lat:3.8069909135671436,  lng:103.32965817856987, col:'#3B8BD4'},
+  {name:'Blok56',          what:'Beleber · Proj. Mapping',         lat:3.8090123233714386,  lng:103.33037485000276, col:'#534AB7'},
+  {name:'KHATAM',          what:'Proj. Mapping',                   lat:3.8079377505421186,  lng:103.32993604298771, col:'#185FA5'},
+  {name:'Barn House',      what:'Exhibition',                      lat:3.8083948491948587,  lng:103.33132009293156, col:'#2D7A4F'},
+  {name:'Lorong Seni',     what:'Pasar Sera Bazaar',               lat:3.8065,              lng:103.3275,           col:'#BA7517'},
+  {name:'Jalan Besar',     what:'Warung Terang',                   lat:3.8065,              lng:103.328,            col:'#185FA5'}
 ];
+
+// Multi-venue overrides: events whose title contains these keys get multiple Take me there! buttons
+var MULTI_VENUE_EVENTS = {
+  'soft soft sands': [
+    {name:'Barn House',     lat:3.8083948491948587, lng:103.33132009293156},
+    {name:'Hock Bee',       lat:3.8066981046542447, lng:103.32899193968659},
+    {name:'Belatuk Social', lat:3.8069909135671436, lng:103.32965817856987}
+  ],
+  'immersiox': [
+    {name:'Blok56',  lat:3.8090123233714386, lng:103.33037485000276, bookingUrl:'https://www.cloudjoi.com/shows/6239-immersiox-by-filamen'},
+    {name:'KHATAM',  lat:3.8079377505421186, lng:103.32993604298771, bookingUrl:'https://www.cloudjoi.com/shows/6240-immersiox-by-filamen'}
+  ]
+};
 
 // ─── State ────────────────────────────────────────────────────────────────────
 var events = [];
@@ -846,21 +860,92 @@ function openDetail(ev) {
   document.getElementById('d-venue').textContent = ev.Venue;
   document.getElementById('d-desc').innerHTML    = (ev.Description||'').replace(/\r\n|\r|\n/g,'<br>');
 
-  var book = document.getElementById('d-book');
-  if (ev['Booking URL'] && ev['Booking URL'].trim()) {
-    book.href = ev['Booking URL']; book.style.display = 'flex';
-  } else {
-    book.style.display = 'none';
+  // Check for multi-venue event
+  var titleLower = (ev.Title || '').toLowerCase();
+  var multiKey = null;
+  for (var k in MULTI_VENUE_EVENTS) {
+    if (titleLower.indexOf(k) > -1) { multiKey = k; break; }
   }
 
-  // nav coords
-  navName = ev.Venue;
-  var v = null;
-  for (var i=0; i<VENUES.length; i++) {
-    if (ev.Venue && ev.Venue.indexOf(VENUES[i].name) > -1) { v = VENUES[i]; break; }
+  var actsEl = document.getElementById('d-acts');
+  // Clear previous dynamic buttons
+  actsEl.innerHTML = '';
+
+  if (multiKey) {
+    var venues = MULTI_VENUE_EVENTS[multiKey];
+    venues.forEach(function(mv) {
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;align-items:center;';
+
+      // Book button per venue (only for immersiox which has per-venue booking)
+      if (mv.bookingUrl) {
+        var btn = document.createElement('a');
+        btn.href = mv.bookingUrl;
+        btn.target = '_blank';
+        btn.className = 'btn-book';
+        btn.style.display = 'flex';
+        btn.textContent = mv.name + ' →';
+        row.appendChild(btn);
+      }
+
+      // Take me there button
+      var nav = document.createElement('button');
+      nav.className = 'btn-nav';
+      nav.textContent = mv.bookingUrl ? 'Take me there!' : mv.name;
+      nav.style.flex = '1';
+      (function(lat, lng, name) {
+        nav.addEventListener('click', function() {
+          navName = name; navLat = lat; navLng = lng;
+          openSheet();
+        });
+      })(mv.lat, mv.lng, mv.name);
+      row.appendChild(nav);
+
+      actsEl.appendChild(row);
+    });
+
+    // For soft soft sands: single book button above if it has a booking URL
+    if (!venues[0].bookingUrl && ev['Booking URL'] && ev['Booking URL'].trim()) {
+      var book = document.createElement('a');
+      book.href = ev['Booking URL'];
+      book.target = '_blank';
+      book.className = 'btn-book';
+      book.style.display = 'flex';
+      book.textContent = 'Book your seat →';
+      actsEl.insertBefore(book, actsEl.firstChild);
+    }
+
+  } else {
+    // Single venue — standard layout
+    var book = document.createElement('a');
+    book.id = 'd-book';
+    book.target = '_blank';
+    book.className = 'btn-book';
+    if (ev['Booking URL'] && ev['Booking URL'].trim()) {
+      book.href = ev['Booking URL'];
+      book.style.display = 'flex';
+      book.textContent = 'Book your seat →';
+    } else {
+      book.style.display = 'none';
+    }
+    actsEl.appendChild(book);
+
+    var takeme = document.createElement('button');
+    takeme.id = 'btn-takeme';
+    takeme.className = 'btn-nav';
+    takeme.textContent = 'Take me there!';
+    takeme.addEventListener('click', openSheet);
+    actsEl.appendChild(takeme);
+
+    // nav coords
+    navName = ev.Venue;
+    var v = null;
+    for (var i=0; i<VENUES.length; i++) {
+      if (ev.Venue && ev.Venue.indexOf(VENUES[i].name) > -1) { v = VENUES[i]; break; }
+    }
+    navLat = v ? v.lat : 3.8065;
+    navLng = v ? v.lng : 103.329;
   }
-  navLat = v ? v.lat : 3.8065;
-  navLng = v ? v.lng : 103.329;
 
   go('detail', true);
 }
@@ -926,7 +1011,7 @@ document.getElementById('nb-prog').addEventListener('click', function(){ go('pro
 document.getElementById('nb-map' ).addEventListener('click', function(){ go('map'); });
 
 document.getElementById('btn-back').addEventListener('click', function(){ go(fromScreen.replace('s-',''), true); });
-document.getElementById('btn-takeme').addEventListener('click', openSheet);
+// btn-takeme is now created dynamically in openDetail
 document.getElementById('sheet-cancel').addEventListener('click', closeSheet);
 document.getElementById('sheet-overlay').addEventListener('click', function(e){ if(e.target===this) closeSheet(); });
 
