@@ -665,17 +665,53 @@ nav {
   <div id="ob-bg"></div>
   <div id="ob-content">
     <img id="ob-logo" src="https://images.squarespace-cdn.com/content/69cb9d5f8c11eb472c8992b7/75bd982c-ca18-4867-944a-55318ac85b4b/FULL+LOGO+1.png?content-type=image%2Fpng" alt="KuArts 2026">
-    <h2 id="ob-title">Welcome to<br>KuArts 2026</h2>
     <p id="ob-sub">Your festival guide</p>
+
+    <p id="ob-cta">Save this to your home screen for easy access while at the festival!</p>
+
     <div id="ob-install">
-      <div class="ob-step">
-        <span class="ob-icon">🍎</span>
-        <span>iOS: tap <strong>Share</strong> → <strong>Add to Home Screen</strong></span>
+
+      <div class="ob-step-title">iOS</div>
+
+      <div class="ob-step-row">
+        <div class="ob-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+        </div>
+        <span class="ob-step-text">Menu</span>
       </div>
-      <div class="ob-step">
-        <span class="ob-icon">🤖</span>
-        <span>Android: tap <strong>⋮</strong> → <strong>Add to Home Screen</strong></span>
+
+      <div class="ob-step-row">
+        <div class="ob-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        </div>
+        <span class="ob-step-text">Share</span>
       </div>
+
+      <div class="ob-step-row">
+        <div class="ob-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        </div>
+        <span class="ob-step-text">Add to Home Screen</span>
+      </div>
+
+      <div class="ob-divider"></div>
+
+      <div class="ob-step-title">Android</div>
+
+      <div class="ob-step-row">
+        <div class="ob-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+        </div>
+        <span class="ob-step-text">Menu</span>
+      </div>
+
+      <div class="ob-step-row">
+        <div class="ob-icon-box">
+          <img src="https://images.squarespace-cdn.com/content/69cb9d5f8c11eb472c8992b7/b35bd717-1c0f-4a9c-9df0-1d2c222f9e76/Untitled+design+%2815%29.png?content-type=image%2Fpng" width="22" height="22" style="filter:invert(1);opacity:0.85;" alt="Add to Home Screen">
+        </div>
+        <span class="ob-step-text">Add to Home Screen</span>
+      </div>
+
     </div>
     <button id="ob-btn">Got it →</button>
   </div>
@@ -730,45 +766,80 @@ nav {
   font-size: 14px;
   color: var(--cream);
   opacity: 0.7;
-  margin: 0 0 32px;
+  margin: 0 0 16px;
+}
+#ob-cta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--cream);
+  line-height: 1.5;
+  text-align: center;
+  margin: 0 0 20px;
+  opacity: 0.9;
 }
 #ob-install {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(232,89,60,0.12);
+  border: 1px solid rgba(232,89,60,0.35);
   border-radius: 16px;
-  padding: 20px;
+  padding: 18px 16px;
   width: 100%;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
-.ob-step {
+.ob-step-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 2px;
+}
+.ob-step-row {
   display: flex;
   align-items: center;
   gap: 12px;
-  text-align: left;
+}
+.ob-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--cream);
+}
+.ob-step-text {
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
   color: var(--cream);
   opacity: 0.85;
   line-height: 1.4;
 }
+.ob-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+  margin: 4px 0;
+}
 .ob-icon {
   font-size: 20px;
   flex-shrink: 0;
 }
+.ob-step-content { flex: 1; }
 #ob-btn {
-  background: var(--coral);
+  background: transparent;
   color: var(--cream);
-  border: none;
+  border: 1px solid rgba(242,237,215,0.3);
   border-radius: 50px;
-  padding: 14px 40px;
+  padding: 10px 32px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  width: 100%;
+  opacity: 0.7;
 }
 </style>
 
@@ -777,11 +848,8 @@ nav {
   <!-- HOME -->
   <div class="screen active" id="s-home">
     <div class="hero">
-      <img class="bg" src="https://images.squarespace-cdn.com/content/v1/69cb9d5f8c11eb472c8992b7/21d84c18-f85f-4d97-8ba0-4328a2662629/KuArts+KV2_KV+-+horizontal+copy.png" alt="">
+      <img class="bg" src="https://images.squarespace-cdn.com/content/69cb9d5f8c11eb472c8992b7/3e7a8ced-b4d1-43ce-82ec-a653106097cf/KUARTS26+KEYART+FB+BANNER.jpg?content-type=image%2Fjpeg" alt="">
       <div class="hero-fade"></div>
-      <div class="hero-logo">
-        <img src="https://images.squarespace-cdn.com/content/69cb9d5f8c11eb472c8992b7/75bd982c-ca18-4867-944a-55318ac85b4b/FULL+LOGO+1.png?content-type=image%2Fpng" alt="KuArts 2026">
-      </div>
     </div>
 
     <div class="sec" id="sec-now" style="display:none">
