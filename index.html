@@ -1018,14 +1018,14 @@ var VENUES = [
   {name:'KHATAM',          what:'Proj. Mapping',                   lat:3.8079377505421186,  lng:103.32993604298771, col:'#185FA5'},
   {name:'Barn House',      what:'Exhibition',                      lat:3.8083948491948587,  lng:103.33132009293156, col:'#2D7A4F'},
   {name:'Lorong Seni',     what:'Pasar Sera Bazaar',               lat:3.8065,              lng:103.3275,           col:'#BA7517'},
-  {name:'Jalan Besar',     what:'Warung Terang',                   lat:3.8065,              lng:103.328,            col:'#185FA5'}
+  {name:'Jalan Besar',     what:'Warung Terang',                   lat:3.8041188017935013, lng:103.3266925572183,  col:'#185FA5'}
 ];
 
 var FACILITIES = [
   {
     type: 'parking', label: 'Parking', icon: '🅿️', col: '#4A7FA5',
     items: [
-      {name:'Public Parking A', lat:3.806545312306613,  lng:103.32750690327775},
+      {name:'Public Parking A', lat:3.8063800,  lng:103.32745},
       {name:'Public Parking B', lat:3.808087896045654,  lng:103.32899209667676},
       {name:'Public Parking C', lat:3.8047977685635015, lng:103.3282301380202},
       {name:'Public Parking D', lat:3.8027688657345533, lng:103.32576140164215}
@@ -1437,7 +1437,7 @@ function buildMap() {
       html:'<div style="width:13px;height:13px;border-radius:50%;background:'+v.col+';border:2px solid rgba(255,255,255,0.75);box-shadow:0 1px 4px rgba(0,0,0,0.5)"></div>',
       iconSize:[13,13], iconAnchor:[6,6], popupAnchor:[0,-8]});
     (function(vv) {
-      L.marker([vv.lat,vv.lng],{icon:ic}).addTo(leafMap)
+      L.marker([vv.lat,vv.lng],{icon:ic, zIndexOffset:1000}).addTo(leafMap)
         .on('click', function() {
           navName=vv.name; navLat=vv.lat; navLng=vv.lng;
           openSheet();
