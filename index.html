@@ -66,6 +66,34 @@ body::before {
   overflow: hidden;
 }
 
+/* ── IAB Banner ── */
+#iab-banner {
+  display: none;
+  background: rgba(232,89,60,0.13);
+  border-bottom: 0.5px solid rgba(232,89,60,0.3);
+  padding: 10px 14px;
+  align-items: center;
+  gap: 10px;
+  z-index: 60;
+  flex-shrink: 0;
+}
+#iab-banner.show { display: flex; }
+#iab-icon {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  background: rgba(232,89,60,0.18);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+#iab-icon svg { width: 15px; height: 15px; stroke: var(--coral); stroke-width: 2; fill: none; }
+#iab-text { flex: 1; min-width: 0; }
+#iab-title { font-size: 12px; font-weight: 600; color: var(--cream); margin-bottom: 1px; }
+#iab-sub { font-size: 11px; color: var(--muted); }
+#iab-close {
+  background: none; border: none; color: var(--muted);
+  font-size: 18px; cursor: pointer; padding: 4px; flex-shrink: 0;
+}
+
 /* ── Screens ── */
 .screen {
   flex: 1;
@@ -552,31 +580,11 @@ nav {
   width: 100%;
   box-sizing: border-box;
 }
-#pahanggo-inner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+#pahanggo-inner { display: flex; align-items: center; gap: 12px; }
 #pahanggo-left { flex: 1; }
-#pahanggo-title {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--cream);
-  margin-bottom: 4px;
-}
-#pahanggo-sub {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  color: var(--cream);
-  opacity: 0.65;
-  line-height: 1.4;
-}
-#pahanggo-arrow {
-  font-size: 20px;
-  color: #4A7FA5;
-  flex-shrink: 0;
-}
+#pahanggo-title { font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; color: var(--cream); margin-bottom: 4px; }
+#pahanggo-sub { font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--cream); opacity: 0.65; line-height: 1.4; }
+#pahanggo-arrow { font-size: 20px; color: #4A7FA5; flex-shrink: 0; }
 
 /* ── Facility grid ── */
 #facility-list {
@@ -586,35 +594,20 @@ nav {
   padding: 0 16px;
 }
 .fac-card {
-  background: var(--card);
+  background: var(--bg2);
   border-radius: 16px;
   padding: 14px;
   cursor: pointer;
   border: 1px solid rgba(255,255,255,0.06);
 }
-.fac-card-icon {
-  font-size: 24px;
-  margin-bottom: 8px;
-}
-.fac-card-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--cream);
-  margin-bottom: 2px;
-}
-.fac-card-count {
-  font-size: 11px;
-  color: var(--muted);
-}
-.fac-card-arrow {
-  font-size: 16px;
-  float: right;
-  margin-top: -28px;
-}
+.fac-card-icon { font-size: 24px; margin-bottom: 8px; }
+.fac-card-label { font-size: 13px; font-weight: 600; color: var(--cream); margin-bottom: 2px; }
+.fac-card-count { font-size: 11px; color: var(--muted); }
+.fac-card-arrow { font-size: 16px; float: right; margin-top: -28px; }
 .fac-sub-list {
   display: none;
   grid-column: 1 / -1;
-  background: var(--card);
+  background: var(--bg2);
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.06);
@@ -666,184 +659,66 @@ nav {
   <div id="ob-content">
     <img id="ob-logo" src="https://images.squarespace-cdn.com/content/69cb9d5f8c11eb472c8992b7/75bd982c-ca18-4867-944a-55318ac85b4b/FULL+LOGO+1.png?content-type=image%2Fpng" alt="KuArts 2026">
     <p id="ob-sub">Your festival guide</p>
-
     <p id="ob-cta">Save this to your home screen for easy access while at the festival!</p>
-
     <div id="ob-install">
-
       <div class="ob-step-title">iOS</div>
-
       <div class="ob-step-row">
-        <div class="ob-icon-box">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-        </div>
+        <div class="ob-icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div>
         <span class="ob-step-text">Menu</span>
       </div>
-
       <div class="ob-step-row">
-        <div class="ob-icon-box">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-        </div>
+        <div class="ob-icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
         <span class="ob-step-text">Share</span>
       </div>
-
       <div class="ob-step-row">
-        <div class="ob-icon-box">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        </div>
+        <div class="ob-icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div>
         <span class="ob-step-text">Add to Home Screen</span>
       </div>
-
       <div class="ob-divider"></div>
-
       <div class="ob-step-title">Android</div>
-
       <div class="ob-step-row">
-        <div class="ob-icon-box">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
-        </div>
+        <div class="ob-icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
         <span class="ob-step-text">Menu</span>
       </div>
-
       <div class="ob-step-row">
-        <div class="ob-icon-box">
-          <img src="https://images.squarespace-cdn.com/content/69cb9d5f8c11eb472c8992b7/b35bd717-1c0f-4a9c-9df0-1d2c222f9e76/Untitled+design+%2815%29.png?content-type=image%2Fpng" width="22" height="22" style="filter:invert(1);opacity:0.85;" alt="Add to Home Screen">
-        </div>
+        <div class="ob-icon-box"><img src="https://images.squarespace-cdn.com/content/69cb9d5f8c11eb472c8992b7/b35bd717-1c0f-4a9c-9df0-1d2c222f9e76/Untitled+design+%2815%29.png?content-type=image%2Fpng" width="22" height="22" style="filter:invert(1);opacity:0.85;" alt="Add to Home Screen"></div>
         <span class="ob-step-text">Add to Home Screen</span>
       </div>
-
     </div>
     <button id="ob-btn">Got it →</button>
   </div>
 </div>
 
 <style>
-#onboarding {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#ob-bg {
-  position: absolute;
-  inset: 0;
-  background-image: url('https://images.squarespace-cdn.com/content/69cb9d5f8c11eb472c8992b7/21d84c18-f85f-4d97-8ba0-4328a2662629/KuArts+KV2_KV+-+horizontal+copy.png?content-type=image%2Fpng');
-  background-size: cover;
-  background-position: center;
-}
-#ob-bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(17,17,16,0.82);
-}
-#ob-content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 40px 28px;
-  text-align: center;
-  max-width: 360px;
-  width: 100%;
-}
-#ob-logo {
-  width: 220px;
-  margin-bottom: 28px;
-}
-#ob-title {
-  font-family: 'Fraunces', serif;
-  font-size: 28px;
-  color: var(--cream);
-  margin: 0 0 8px;
-  line-height: 1.2;
-}
-#ob-sub {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  color: var(--cream);
-  opacity: 0.7;
-  margin: 0 0 16px;
-}
-#ob-cta {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  color: var(--cream);
-  line-height: 1.5;
-  text-align: center;
-  margin: 0 0 20px;
-  opacity: 0.9;
-}
-#ob-install {
-  background: rgba(232,89,60,0.12);
-  border: 1px solid rgba(232,89,60,0.35);
-  border-radius: 16px;
-  padding: 18px 16px;
-  width: 100%;
-  margin-bottom: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.ob-step-title {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--coral);
-  margin-bottom: 2px;
-}
-.ob-step-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.ob-icon-box {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: rgba(255,255,255,0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: var(--cream);
-}
-.ob-step-text {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  color: var(--cream);
-  opacity: 0.85;
-  line-height: 1.4;
-}
-.ob-divider {
-  height: 1px;
-  background: rgba(255,255,255,0.1);
-  margin: 4px 0;
-}
-.ob-icon {
-  font-size: 20px;
-  flex-shrink: 0;
-}
-.ob-step-content { flex: 1; }
-#ob-btn {
-  background: transparent;
-  color: var(--cream);
-  border: 1px solid rgba(242,237,215,0.3);
-  border-radius: 50px;
-  padding: 10px 32px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  opacity: 0.7;
-}
+#onboarding { position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center; }
+#ob-bg { position:absolute; inset:0; background-image:url('https://images.squarespace-cdn.com/content/69cb9d5f8c11eb472c8992b7/21d84c18-f85f-4d97-8ba0-4328a2662629/KuArts+KV2_KV+-+horizontal+copy.png?content-type=image%2Fpng'); background-size:cover; background-position:center; }
+#ob-bg::after { content:''; position:absolute; inset:0; background:rgba(17,17,16,0.82); }
+#ob-content { position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; padding:40px 28px; text-align:center; max-width:360px; width:100%; }
+#ob-logo { width:220px; margin-bottom:28px; }
+#ob-sub { font-family:'DM Sans',sans-serif; font-size:14px; color:var(--cream); opacity:0.7; margin:0 0 16px; }
+#ob-cta { font-family:'DM Sans',sans-serif; font-size:13px; color:var(--cream); line-height:1.5; text-align:center; margin:0 0 20px; opacity:0.9; }
+#ob-install { background:rgba(232,89,60,0.12); border:1px solid rgba(232,89,60,0.35); border-radius:16px; padding:18px 16px; width:100%; margin-bottom:20px; display:flex; flex-direction:column; gap:12px; }
+.ob-step-title { font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--coral); margin-bottom:2px; }
+.ob-step-row { display:flex; align-items:center; gap:12px; }
+.ob-icon-box { width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--cream); }
+.ob-step-text { font-family:'DM Sans',sans-serif; font-size:13px; color:var(--cream); opacity:0.85; line-height:1.4; }
+.ob-divider { height:1px; background:rgba(255,255,255,0.1); margin:4px 0; }
+#ob-btn { background:transparent; color:var(--cream); border:1px solid rgba(242,237,215,0.3); border-radius:50px; padding:10px 32px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; cursor:pointer; opacity:0.7; }
 </style>
 
 <div id="app">
+
+  <!-- IAB BANNER -->
+  <div id="iab-banner">
+    <div id="iab-icon">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    </div>
+    <div id="iab-text">
+      <div id="iab-title">Open in your browser for the best experience</div>
+      <div id="iab-sub">Tap ··· → Open in Browser</div>
+    </div>
+    <button id="iab-close">✕</button>
+  </div>
 
   <!-- HOME -->
   <div class="screen active" id="s-home">
@@ -851,17 +726,14 @@ nav {
       <img class="bg" src="https://images.squarespace-cdn.com/content/69cb9d5f8c11eb472c8992b7/3e7a8ced-b4d1-43ce-82ec-a653106097cf/KUARTS26+KEYART+FB+BANNER.jpg?content-type=image%2Fjpeg" alt="">
       <div class="hero-fade"></div>
     </div>
-
     <div class="sec" id="sec-now" style="display:none">
       <div class="sec-title"><span class="pulse"></span>Happening now</div>
       <div id="list-now"></div>
     </div>
-
     <div class="sec" id="sec-next" style="display:none">
       <div class="sec-title">Coming up next</div>
       <div class="car-wrap"><div class="car-track" id="car"></div></div>
     </div>
-
     <div class="sec"><div class="sec-title">Programme</div></div>
     <div class="tiles">
       <div class="tile" data-cat="music">
@@ -995,7 +867,6 @@ nav {
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// ─── Config ───────────────────────────────────────────────────────────────────
 var CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQpafaAud3onx5oGxS2DDX5p2o2xXhSaUvT8dxxJnBfmlQNR2S1gJse-NIyW8nRt1FWXtHMEoSz6L7s/pub?output=csv';
 
 var COLORS = {
@@ -1008,38 +879,39 @@ var TAGS = {
   softsands:'Exhibition', filamen:'Proj. Mapping', film:'Film',
   bazaar:'Bazaar', special:'Special'
 };
-var DAY_LONG = {fri:'Friday 12 June', sat:'Saturday 13 June', sun:'Sunday 14 June'};
+var DAY_LONG  = {fri:'Friday 12 June', sat:'Saturday 13 June', sun:'Sunday 14 June'};
 var DAY_SHORT = {fri:'Fri 12', sat:'Sat 13', sun:'Sun 14'};
 
 var VENUES = [
-  {name:'Hock Bee',        what:'Music · Exhibition · Workshops',  lat:3.8066981046542447,  lng:103.32899193968659, col:'#E8593C'},
-  {name:'Belatuk Social',  what:'Theatre · Film · Workshops',      lat:3.8069909135671436,  lng:103.32965817856987, col:'#3B8BD4'},
-  {name:'Blok56',          what:'Beleber · Proj. Mapping',         lat:3.8090123233714386,  lng:103.33037485000276, col:'#534AB7'},
-  {name:'KHATAM',          what:'Proj. Mapping',                   lat:3.8079377505421186,  lng:103.32993604298771, col:'#185FA5'},
-  {name:'Barn House',      what:'Exhibition',                      lat:3.8083948491948587,  lng:103.33132009293156, col:'#2D7A4F'},
-  {name:'Lorong Seni',     what:'Pasar Sera Bazaar',               lat:3.8065,              lng:103.3275,           col:'#BA7517'},
-  {name:'Jalan Besar',     what:'Warung Terang',                   lat:3.8060861090155336, lng:103.32865964640095, col:'#185FA5'}
+  {name:'Hock Bee',        what:'Music · Exhibition · Workshops', lat:3.8066981046542447, lng:103.32899193968659, col:'#E8593C'},
+  {name:'Studio Belatuk',  what:'Theatre · Film · Workshops',     lat:3.8071063187084224, lng:103.32945634117063, col:'#3B8BD4'},
+  {name:'Belatuk Social',  what:'Theatre · Film · Workshops',     lat:3.8069909135671436, lng:103.32965817856987, col:'#3B8BD4'},
+  {name:'Blok56',          what:'Beleber · Proj. Mapping',        lat:3.8090123233714386, lng:103.33037485000276, col:'#534AB7'},
+  {name:'KHATAM',          what:'Proj. Mapping',                  lat:3.8079377505421186, lng:103.32993604298771, col:'#185FA5'},
+  {name:'Barn House',      what:'Exhibition',                     lat:3.8083948491948587, lng:103.33132009293156, col:'#2D7A4F'},
+  {name:'Lorong Seni',     what:'Pasar Sera Bazaar',              lat:3.8065,             lng:103.3275,           col:'#BA7517'},
+  {name:'Jalan Besar',     what:'Warung Terang',                  lat:3.8060861090155336, lng:103.32865964640095, col:'#185FA5'}
 ];
 
 var FACILITIES = [
   {
-    type: 'parking', label: 'Parking', icon: '🅿️', col: '#4A7FA5',
-    items: [
-      {name:'Public Parking A', lat:3.8063800,  lng:103.32745},
-      {name:'Public Parking B', lat:3.808087896045654,  lng:103.32899209667676},
-      {name:'Public Parking C', lat:3.8047977685635015, lng:103.3282301380202},
-      {name:'Public Parking D', lat:3.8027688657345533, lng:103.32576140164215}
+    type:'parking', label:'Parking', icon:'🅿️', col:'#4A7FA5',
+    items:[
+      {name:'Public Parking A', lat:3.8063800,             lng:103.32745},
+      {name:'Public Parking B', lat:3.808087896045654,     lng:103.32899209667676},
+      {name:'Public Parking C', lat:3.8047977685635015,    lng:103.3282301380202},
+      {name:'Public Parking D', lat:3.8027688657345533,    lng:103.32576140164215}
     ]
   },
   {
-    type: 'surau', label: 'Surau', icon: '🕌', col: '#2D7A4F',
-    items: [
+    type:'surau', label:'Surau', icon:'🕌', col:'#2D7A4F',
+    items:[
       {name:'Surau @ Hock Bee', lat:3.8067800, lng:103.32875}
     ]
   },
   {
-    type: 'toilet', label: 'Toilets', icon: '🚻', col: '#3B8BD4',
-    items: [
+    type:'toilet', label:'Toilets', icon:'🚻', col:'#3B8BD4',
+    items:[
       {name:'Toilet A', lat:3.803243936539444,  lng:103.32664552591606},
       {name:'Toilet B', lat:3.80566985569529,   lng:103.32651331543795},
       {name:'Toilet C', lat:3.805939475456733,  lng:103.32890051328133}
@@ -1047,7 +919,6 @@ var FACILITIES = [
   }
 ];
 
-// Multi-venue overrides: events whose title contains these keys get multiple Take me there! buttons
 var MULTI_VENUE_EVENTS = {
   'soft soft sands': [
     {name:'Barn House',     lat:3.8083948491948587, lng:103.33132009293156},
@@ -1055,23 +926,16 @@ var MULTI_VENUE_EVENTS = {
     {name:'Belatuk Social', lat:3.8069909135671436, lng:103.32965817856987}
   ],
   'immersiox': [
-    {name:'Blok56',  lat:3.8090123233714386, lng:103.33037485000276, bookingUrl:'https://www.cloudjoi.com/shows/6239-immersiox-by-filamen'},
-    {name:'KHATAM',  lat:3.8079377505421186, lng:103.32993604298771, bookingUrl:'https://www.cloudjoi.com/shows/6240-immersiox-by-filamen'}
+    {name:'Blok56', lat:3.8090123233714386, lng:103.33037485000276, bookingUrl:'https://www.cloudjoi.com/shows/6239-immersiox-by-filamen'},
+    {name:'KHATAM', lat:3.8079377505421186, lng:103.32993604298771, bookingUrl:'https://www.cloudjoi.com/shows/6240-immersiox-by-filamen'}
   ]
 };
 
-// ─── State ────────────────────────────────────────────────────────────────────
-var events = [];
-var dayFilter = 'all';
-var catFilter = 'all';
-var fromScreen = 'home';
-var navLat = 0, navLng = 0, navName = '';
-var leafMap = null;
+var events = [], dayFilter = 'all', catFilter = 'all', fromScreen = 'home';
+var navLat = 0, navLng = 0, navName = '', leafMap = null;
 
-// ─── CSV parser (handles multiline quoted fields) ─────────────────────────────
 function parseCSV(raw) {
   var out = [], pos = 0, N = raw.length;
-
   function field() {
     if (raw[pos] === '"') {
       pos++;
@@ -1087,7 +951,6 @@ function parseCSV(raw) {
     while (pos < N && raw[pos] !== ',' && raw[pos] !== '\n' && raw[pos] !== '\r') pos++;
     return raw.slice(s, pos).trim();
   }
-
   function row() {
     var r = [];
     while (pos < N && raw[pos] !== '\n' && raw[pos] !== '\r') {
@@ -1097,7 +960,6 @@ function parseCSV(raw) {
     while (pos < N && (raw[pos] === '\n' || raw[pos] === '\r')) pos++;
     return r;
   }
-
   var hdrs = row();
   while (pos < N) {
     var r = row();
@@ -1109,7 +971,6 @@ function parseCSV(raw) {
   return out;
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 function fmt(dt) {
   if (!dt) return '';
   var t = dt.indexOf(' ') > -1 ? dt.split(' ')[1] : dt;
@@ -1118,106 +979,65 @@ function fmt(dt) {
   if (h > 12) h -= 12; if (!h) h = 12;
   return m === '00' ? h+s : h+':'+m+s;
 }
-function col(type)  { return COLORS[type] || COLORS.special; }
-function tag(type)  { return TAGS[type]   || 'Event'; }
+function col(type) { return COLORS[type] || COLORS.special; }
+function tag(type) { return TAGS[type]   || 'Event'; }
 
 function makeRow(ev, live) {
   var d = document.createElement('div');
   d.className = 'erow' + (live ? ' live' : '');
-
-  var thumb = document.createElement('div');
-  thumb.className = 'ethumb';
-  var img = document.createElement('img');
-  img.alt = '';
+  var thumb = document.createElement('div'); thumb.className = 'ethumb';
+  var img = document.createElement('img'); img.alt = '';
   img.src = (ev['Image URL'] || '').trim();
   img.onerror = function(){ this.style.display='none'; thumb.style.background=col(ev.Type); };
   thumb.appendChild(img);
-
-  var info = document.createElement('div');
-  info.className = 'einfo';
+  var info = document.createElement('div'); info.className = 'einfo';
   info.innerHTML = '<div class="etitle">'+ev.Title+'</div><div class="emeta">'+fmt(ev['Start DateTime'])+' · '+ev.Venue+'</div>';
-
   var t = document.createElement('span');
   t.className = 'etag' + (live ? ' live' : '');
   t.textContent = live ? 'Live' : tag(ev.Type);
-
   d.appendChild(thumb); d.appendChild(info); d.appendChild(t);
   d.addEventListener('click', function(){ openDetail(ev); });
   return d;
 }
 
 function makeCard(ev) {
-  var d = document.createElement('div');
-  d.className = 'ecard';
-
-  // Poster
-  var thumb = document.createElement('div');
-  thumb.className = 'ecard-thumb';
-  var img = document.createElement('img');
-  img.alt = '';
+  var d = document.createElement('div'); d.className = 'ecard';
+  var thumb = document.createElement('div'); thumb.className = 'ecard-thumb';
+  var img = document.createElement('img'); img.alt = '';
   img.src = (ev['Image URL'] || '').trim();
   img.onerror = function(){ this.style.display='none'; thumb.style.background=col(ev.Type); };
   thumb.appendChild(img);
-
-  // Body
-  var body = document.createElement('div');
-  body.className = 'ecard-body';
-
-  var pill = document.createElement('span');
-  pill.className = 'ecard-pill';
-  pill.textContent = tag(ev.Type);
-  pill.style.background = col(ev.Type);
-
-  var title = document.createElement('div');
-  title.className = 'ecard-title';
-  title.textContent = ev.Title;
-
-  var time = document.createElement('div');
-  time.className = 'ecard-time';
-  time.textContent = fmt(ev['Start DateTime']);
-
-  var venue = document.createElement('div');
-  venue.className = 'ecard-venue';
-  venue.textContent = ev.Venue;
-
-  body.appendChild(pill);
-  body.appendChild(title);
-  body.appendChild(time);
-  body.appendChild(venue);
-
-  d.appendChild(thumb);
-  d.appendChild(body);
+  var body = document.createElement('div'); body.className = 'ecard-body';
+  var pill = document.createElement('span'); pill.className = 'ecard-pill';
+  pill.textContent = tag(ev.Type); pill.style.background = col(ev.Type);
+  var title = document.createElement('div'); title.className = 'ecard-title'; title.textContent = ev.Title;
+  var time = document.createElement('div'); time.className = 'ecard-time'; time.textContent = fmt(ev['Start DateTime']);
+  var venue = document.createElement('div'); venue.className = 'ecard-venue'; venue.textContent = ev.Venue;
+  body.appendChild(pill); body.appendChild(title); body.appendChild(time); body.appendChild(venue);
+  d.appendChild(thumb); d.appendChild(body);
   d.addEventListener('click', function(){ openDetail(ev); });
   return d;
 }
 
-// ─── Home ─────────────────────────────────────────────────────────────────────
 function buildHome() {
   var now = new Date();
-
-  // Happening now
   var nowEvs = events.filter(function(e){
     return new Date(e['Start DateTime']) <= now && new Date(e['End DateTime']) >= now;
   });
   if (nowEvs.length) {
     document.getElementById('sec-now').style.display = '';
-    var nl = document.getElementById('list-now');
-    nl.innerHTML = '';
+    var nl = document.getElementById('list-now'); nl.innerHTML = '';
     nowEvs.forEach(function(e){ nl.appendChild(makeRow(e, true)); });
   }
-
-  // Coming up next
   var next = events.filter(function(e){ return new Date(e['Start DateTime']) > now; })
     .sort(function(a,b){ return new Date(a['Start DateTime'])-new Date(b['Start DateTime']); });
   if (next.length) {
     document.getElementById('sec-next').style.display = '';
-    var car = document.getElementById('car');
-    car.innerHTML = '';
+    var car = document.getElementById('car'); car.innerHTML = '';
     next.slice(0,8).forEach(function(e){
-      var c = document.createElement('div');
-      c.className = 'car-card';
+      var c = document.createElement('div'); c.className = 'car-card';
       c.style.background = col(e.Type);
-      c.innerHTML = '<span class="cc-day">'+( DAY_SHORT[e.Day]||e.Day )+'</span>'
+      c.innerHTML = '<span class="cc-day">'+(DAY_SHORT[e.Day]||e.Day)+'</span>'
         +'<span class="cc-tag">'+e.Category.toUpperCase()+'</span>'
         +'<div class="cc-title">'+e.Title+'</div>'
         +'<div class="cc-venue">'+e.Venue+'</div>'
@@ -1228,12 +1048,10 @@ function buildHome() {
   }
 }
 
-// ─── Programme ────────────────────────────────────────────────────────────────
 function buildPills() {
   var dp = document.getElementById('day-pills');
   var cp = document.getElementById('cat-pills');
   dp.innerHTML = ''; cp.innerHTML = '';
-
   [['all','All Days'],['fri','Fri 12'],['sat','Sat 13'],['sun','Sun 14']].forEach(function(x){
     var p = document.createElement('div');
     p.className = 'pill' + (x[0]===dayFilter ? ' pd' : '');
@@ -1241,7 +1059,6 @@ function buildPills() {
     p.addEventListener('click', function(){ dayFilter=x[0]; buildPills(); renderProg(); });
     dp.appendChild(p);
   });
-
   [['all','All'],['music','Music'],['theatre','Theatre'],['workshop','Workshops'],['events','Events']].forEach(function(x){
     var p = document.createElement('div');
     p.className = 'pill' + (x[0]===catFilter ? ' pc' : '');
@@ -1252,48 +1069,38 @@ function buildPills() {
 }
 
 function renderProg() {
-  var el = document.getElementById('prog-list');
-  el.innerHTML = '';
+  var el = document.getElementById('prog-list'); el.innerHTML = '';
   var list = events
     .filter(function(e){ return (dayFilter==='all'||e.Day===dayFilter) && (catFilter==='all'||e.Category===catFilter); })
     .sort(function(a,b){ return new Date(a['Start DateTime'])-new Date(b['Start DateTime']); });
-
   if (!list.length) {
     el.innerHTML = '<p style="text-align:center;padding:40px 16px;color:var(--muted);font-size:13px;">No events for this filter.</p>';
     return;
   }
-  var lastDay = '';
-  var grid = null;
+  var lastDay = '', grid = null;
   list.forEach(function(e){
     if (e.Day !== lastDay) {
-      var lbl = document.createElement('div');
-      lbl.className = 'day-lbl';
+      var lbl = document.createElement('div'); lbl.className = 'day-lbl';
       lbl.textContent = DAY_LONG[e.Day] || e.Day;
-      el.appendChild(lbl);
-      lastDay = e.Day;
-      grid = document.createElement('div');
-      grid.className = 'prog-grid';
+      el.appendChild(lbl); lastDay = e.Day;
+      grid = document.createElement('div'); grid.className = 'prog-grid';
       el.appendChild(grid);
     }
     grid.appendChild(makeCard(e));
   });
 }
 
-// ─── Detail ───────────────────────────────────────────────────────────────────
 function openDetail(ev) {
   fromScreen = document.querySelector('.screen.active').id;
-
   document.getElementById('d-img').src = (ev['Image URL']||'').trim();
   var badge = document.getElementById('d-badge');
-  badge.textContent = tag(ev.Type);
-  badge.style.background = col(ev.Type);
+  badge.textContent = tag(ev.Type); badge.style.background = col(ev.Type);
   document.getElementById('d-title').textContent = ev.Title;
   document.getElementById('d-time').textContent  = fmt(ev['Start DateTime'])+' – '+fmt(ev['End DateTime']);
   document.getElementById('d-date').textContent  = DAY_LONG[ev.Day]||ev.Day;
   document.getElementById('d-venue').textContent = ev.Venue;
   document.getElementById('d-desc').innerHTML    = (ev.Description||'').replace(/\r\n|\r|\n/g,'<br>');
 
-  // Check for multi-venue event
   var titleLower = (ev.Title || '').toLowerCase();
   var multiKey = null;
   for (var k in MULTI_VENUE_EVENTS) {
@@ -1301,119 +1108,69 @@ function openDetail(ev) {
   }
 
   var actsEl = document.getElementById('d-acts');
-  // Clear previous dynamic buttons
   actsEl.innerHTML = '';
   actsEl.classList.remove('multi-venue');
 
   if (multiKey) {
     var venues = MULTI_VENUE_EVENTS[multiKey];
     actsEl.classList.add('multi-venue');
-
-    // For IMMERSIOx: two rows of [Book Your Spot · Venue] + [Take me there!]
     if (venues[0].bookingUrl) {
       venues.forEach(function(mv) {
         var row = document.createElement('div');
         row.style.cssText = 'display:flex;gap:8px;align-items:stretch;width:100%;';
-
         var btn = document.createElement('a');
-        btn.href = mv.bookingUrl;
-        btn.target = '_blank';
-        btn.className = 'btn-book';
-        btn.style.display = 'flex';
-        btn.style.flexDirection = 'column';
-        btn.style.lineHeight = '1.2';
-        btn.style.textAlign = 'center';
-        btn.innerHTML = 'Book Your Spot<br><span style="font-size:0.8em;opacity:0.85">' + mv.name + '</span>';
+        btn.href = mv.bookingUrl; btn.target = '_blank'; btn.className = 'btn-book';
+        btn.style.cssText = 'display:flex;flex-direction:column;line-height:1.2;text-align:center;';
+        btn.innerHTML = 'Book Your Spot<br><span style="font-size:0.8em;opacity:0.85">'+mv.name+'</span>';
         row.appendChild(btn);
-
         var nav = document.createElement('button');
-        nav.className = 'btn-nav';
-        nav.style.flex = '1';
-        nav.textContent = 'Take me there!';
-        (function(lat, lng, name) {
-          nav.addEventListener('click', function() {
-            navName = name; navLat = lat; navLng = lng;
-            openSheet();
-          });
-        })(mv.lat, mv.lng, mv.name);
+        nav.className = 'btn-nav'; nav.style.flex = '1'; nav.textContent = 'Take me there!';
+        (function(lat,lng,name){ nav.addEventListener('click', function(){ navName=name; navLat=lat; navLng=lng; openSheet(); }); })(mv.lat,mv.lng,mv.name);
         row.appendChild(nav);
-
         actsEl.appendChild(row);
       });
-
-    // For soft soft sands: book button, then "Take me there" label, then venue buttons
     } else {
-      // Book button if exists
       var ssBookingUrl = (ev['Booking URL'] || '').trim();
       if (ssBookingUrl === 'sold-out') {
         var book = document.createElement('a');
-        book.className = 'btn-book sold-out';
-        book.textContent = 'Fully Booked';
-        book.style.display = 'flex';
-        book.style.marginBottom = '12px';
+        book.className = 'btn-book sold-out'; book.textContent = 'Fully Booked';
+        book.style.cssText = 'display:flex;margin-bottom:12px;';
         actsEl.appendChild(book);
       } else if (ssBookingUrl) {
         var book = document.createElement('a');
-        book.href = ssBookingUrl;
-        book.target = '_blank';
-        book.className = 'btn-book';
-        book.style.display = 'flex';
-        book.style.marginBottom = '12px';
+        book.href = ssBookingUrl; book.target = '_blank'; book.className = 'btn-book';
+        book.style.cssText = 'display:flex;margin-bottom:12px;';
         book.textContent = 'Book your spot →';
         actsEl.appendChild(book);
       }
-
-      // "Take me there" label
       var lbl = document.createElement('div');
       lbl.textContent = 'Take me there';
       lbl.style.cssText = 'font-size:12px;font-weight:600;color:var(--cream);opacity:0.6;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;';
       actsEl.appendChild(lbl);
-
-      // One button per venue
       venues.forEach(function(mv) {
         var nav = document.createElement('button');
-        nav.className = 'btn-nav';
-        nav.style.cssText = 'width:100%;margin-bottom:8px;';
+        nav.className = 'btn-nav'; nav.style.cssText = 'width:100%;margin-bottom:8px;';
         nav.textContent = mv.name;
-        (function(lat, lng, name) {
-          nav.addEventListener('click', function() {
-            navName = name; navLat = lat; navLng = lng;
-            openSheet();
-          });
-        })(mv.lat, mv.lng, mv.name);
+        (function(lat,lng,name){ nav.addEventListener('click', function(){ navName=name; navLat=lat; navLng=lng; openSheet(); }); })(mv.lat,mv.lng,mv.name);
         actsEl.appendChild(nav);
       });
     }
-
   } else {
-    // Single venue — standard layout
     var book = document.createElement('a');
-    book.id = 'd-book';
-    book.target = '_blank';
+    book.id = 'd-book'; book.target = '_blank';
     var bookingUrl = (ev['Booking URL'] || '').trim();
     if (bookingUrl === 'sold-out') {
-      book.className = 'btn-book sold-out';
-      book.textContent = 'Fully Booked';
-      book.style.display = 'flex';
+      book.className = 'btn-book sold-out'; book.textContent = 'Fully Booked'; book.style.display = 'flex';
     } else if (bookingUrl) {
-      book.className = 'btn-book';
-      book.href = bookingUrl;
-      book.style.display = 'flex';
-      book.textContent = 'Book your seat →';
+      book.className = 'btn-book'; book.href = bookingUrl; book.style.display = 'flex'; book.textContent = 'Book your seat →';
     } else {
-      book.className = 'btn-book';
-      book.style.display = 'none';
+      book.className = 'btn-book'; book.style.display = 'none';
     }
     actsEl.appendChild(book);
-
     var takeme = document.createElement('button');
-    takeme.id = 'btn-takeme';
-    takeme.className = 'btn-nav';
-    takeme.textContent = 'Take me there!';
+    takeme.id = 'btn-takeme'; takeme.className = 'btn-nav'; takeme.textContent = 'Take me there!';
     takeme.addEventListener('click', openSheet);
     actsEl.appendChild(takeme);
-
-    // nav coords
     navName = ev.Venue;
     var v = null;
     for (var i=0; i<VENUES.length; i++) {
@@ -1422,120 +1179,90 @@ function openDetail(ev) {
     navLat = v ? v.lat : 3.8065;
     navLng = v ? v.lng : 103.329;
   }
-
   go('detail', true);
 }
 
-// ─── Map ──────────────────────────────────────────────────────────────────────
 function buildMap() {
   if (leafMap) return;
   leafMap = L.map('map', {center:[3.8072,103.3293], zoom:15, zoomControl:false});
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
     {attribution:'© OpenStreetMap © CARTO', maxZoom:19}).addTo(leafMap);
+
   VENUES.forEach(function(v){
     var ic = L.divIcon({className:'',
       html:'<div style="width:13px;height:13px;border-radius:50%;background:'+v.col+';border:2px solid rgba(255,255,255,0.75);box-shadow:0 1px 4px rgba(0,0,0,0.5)"></div>',
       iconSize:[13,13], iconAnchor:[6,6], popupAnchor:[0,-8]});
-    (function(vv) {
-      L.marker([vv.lat,vv.lng],{icon:ic, zIndexOffset:1000}).addTo(leafMap)
-        .on('click', function() {
-          navName=vv.name; navLat=vv.lat; navLng=vv.lng;
-          openSheet();
-        });
+    (function(vv){
+      L.marker([vv.lat,vv.lng],{icon:ic,zIndexOffset:1000}).addTo(leafMap)
+        .on('click', function(){ navName=vv.name; navLat=vv.lat; navLng=vv.lng; openSheet(); });
     })(v);
   });
 
   var vl = document.getElementById('venue-list');
   VENUES.forEach(function(v){
-    var r = document.createElement('div');
-    r.className = 'vrow';
+    var r = document.createElement('div'); r.className = 'vrow';
     r.innerHTML = '<div class="vicon" style="background:'+v.col+'">'
       +'<svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>'
       +'</div>'
       +'<div><div class="vname">'+v.name+'</div><div class="vwhat">'+v.what+'</div></div>'
       +'<button class="vgo" style="background:'+v.col+'22;color:'+v.col+';border:0.5px solid '+v.col+'55">Go →</button>';
     r.querySelector('.vgo').addEventListener('click', function(e){
-      e.stopPropagation();
-      navName=v.name; navLat=v.lat; navLng=v.lng;
-      openSheet();
+      e.stopPropagation(); navName=v.name; navLat=v.lat; navLng=v.lng; openSheet();
     });
     vl.appendChild(r);
   });
 
-  // ── Facility pins on map ──
-  FACILITIES.forEach(function(f) {
-    f.items.forEach(function(item) {
+  FACILITIES.forEach(function(f){
+    f.items.forEach(function(item){
       var ic = L.divIcon({className:'',
         html:'<div style="width:26px;height:26px;border-radius:50%;background:'+f.col+';border:2px solid rgba(255,255,255,0.75);box-shadow:0 1px 4px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;font-size:13px;">'+f.icon+'</div>',
         iconSize:[26,26], iconAnchor:[13,13], popupAnchor:[0,-14]});
-      (function(it) {
+      (function(it){
         L.marker([it.lat,it.lng],{icon:ic}).addTo(leafMap)
-          .on('click', function() {
-            navName=it.name; navLat=it.lat; navLng=it.lng;
-            openSheet();
-          });
+          .on('click', function(){ navName=it.name; navLat=it.lat; navLng=it.lng; openSheet(); });
       })(item);
     });
   });
 
-  // ── Facilities list ──
   var fl = document.getElementById('facility-list');
-  FACILITIES.forEach(function(f, idx) {
-    // Card
-    var card = document.createElement('div');
-    card.className = 'fac-card';
-    card.style.borderTop = '3px solid ' + f.col;
+  FACILITIES.forEach(function(f){
+    var card = document.createElement('div'); card.className = 'fac-card';
+    card.style.borderTop = '3px solid '+f.col;
     card.innerHTML = '<div class="fac-card-icon">'+f.icon+'</div>'
       +'<div class="fac-card-label">'+f.label+'</div>'
       +'<div class="fac-card-count">'+f.items.length+' location'+(f.items.length>1?'s':'')+'</div>'
       +'<div class="fac-card-arrow" style="color:'+f.col+'">›</div>';
-
-    // Sub-list (spans full width)
-    var sub = document.createElement('div');
-    sub.className = 'fac-sub-list';
-    f.items.forEach(function(item) {
-      var sr = document.createElement('div');
-      sr.className = 'vrow';
+    var sub = document.createElement('div'); sub.className = 'fac-sub-list';
+    f.items.forEach(function(item){
+      var sr = document.createElement('div'); sr.className = 'vrow';
       sr.innerHTML = '<div class="vicon" style="background:'+f.col+'44;border:1px solid '+f.col+'66;font-size:12px;display:flex;align-items:center;justify-content:center;">'+f.icon+'</div>'
         +'<div><div class="vname">'+item.name+'</div></div>'
         +'<button class="vgo" style="background:'+f.col+'22;color:'+f.col+';border:0.5px solid '+f.col+'55">Go →</button>';
       sr.querySelector('.vgo').addEventListener('click', (function(it){
-        return function(e) {
-          e.stopPropagation();
-          navName = it.name; navLat = it.lat; navLng = it.lng;
-          openSheet();
-        };
+        return function(e){ e.stopPropagation(); navName=it.name; navLat=it.lat; navLng=it.lng; openSheet(); };
       })(item));
       sub.appendChild(sr);
     });
-
-    // Toggle on card click
-    card.addEventListener('click', function() {
+    card.addEventListener('click', function(){
       var open = sub.style.display === 'block';
-      // Close all other sub-lists first
-      fl.querySelectorAll('.fac-sub-list').forEach(function(s){ s.style.display = 'none'; });
-      fl.querySelectorAll('.fac-card-arrow').forEach(function(a){ a.textContent = '›'; });
+      fl.querySelectorAll('.fac-sub-list').forEach(function(s){ s.style.display='none'; });
+      fl.querySelectorAll('.fac-card-arrow').forEach(function(a){ a.textContent='›'; });
       sub.style.display = open ? 'none' : 'block';
       card.querySelector('.fac-card-arrow').textContent = open ? '›' : '⌄';
     });
-
     fl.appendChild(card);
     fl.appendChild(sub);
   });
 }
 
-// ─── Sheet ────────────────────────────────────────────────────────────────────
 function openSheet() {
   document.getElementById('sheet-vname').textContent = navName;
   document.getElementById('sheet-gmaps').href = 'https://www.google.com/maps/dir/?api=1&destination='+navLat+','+navLng;
   document.getElementById('sheet-waze').href  = 'https://waze.com/ul?ll='+navLat+','+navLng+'&navigate=yes';
   document.getElementById('sheet-overlay').classList.add('on');
 }
-function closeSheet() {
-  document.getElementById('sheet-overlay').classList.remove('on');
-}
+function closeSheet() { document.getElementById('sheet-overlay').classList.remove('on'); }
 
-// ─── Navigation ───────────────────────────────────────────────────────────────
 function go(id, skipNav) {
   document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
   document.getElementById('s-'+id).classList.add('active');
@@ -1551,10 +1278,17 @@ function go(id, skipNav) {
 document.getElementById('nb-home').addEventListener('click', function(){ go('home'); });
 document.getElementById('nb-prog').addEventListener('click', function(){ go('prog'); buildPills(); renderProg(); });
 document.getElementById('nb-map' ).addEventListener('click', function(){ go('map'); });
-
 document.getElementById('btn-back').addEventListener('click', function(){ go(fromScreen.replace('s-',''), true); });
-// btn-takeme is now created dynamically in openDetail
 document.getElementById('sheet-cancel').addEventListener('click', closeSheet);
+document.getElementById('sheet-overlay').addEventListener('click', function(e){ if(e.target===this) closeSheet(); });
+document.getElementById('iab-close').addEventListener('click', function(){ document.getElementById('iab-banner').classList.remove('show'); });
+
+// ─── IAB detection ────────────────────────────────────────────────────────────
+(function() {
+  var ua = navigator.userAgent || '';
+  var isIAB = /Instagram|FBAN|FBAV|FB_IAB|Twitter|Line\/|KAKAOTALK|MicroMessenger/i.test(ua);
+  if (isIAB) document.getElementById('iab-banner').classList.add('show');
+})();
 
 // ─── Back to top button ───────────────────────────────────────────────────────
 (function() {
@@ -1564,62 +1298,40 @@ document.getElementById('sheet-cancel').addEventListener('click', closeSheet);
   btn.style.cssText = 'display:none;position:fixed;bottom:88px;right:16px;z-index:100;width:36px;height:36px;border-radius:50%;background:var(--coral);border:none;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.4);';
   btn.querySelector('svg').style.cssText = 'width:16px;height:16px;stroke:var(--cream);';
   document.getElementById('app').appendChild(btn);
-
-  btn.addEventListener('click', function() {
-    var active = document.querySelector('.screen.active');
-    if (active) active.scrollTop = 0;
-  });
-
-  document.querySelectorAll('.screen').forEach(function(screen) {
-    screen.addEventListener('scroll', function() {
-      btn.style.display = this.scrollTop > 200 ? 'flex' : 'none';
-    });
+  btn.addEventListener('click', function(){ var a=document.querySelector('.screen.active'); if(a) a.scrollTop=0; });
+  document.querySelectorAll('.screen').forEach(function(s){
+    s.addEventListener('scroll', function(){ btn.style.display = this.scrollTop>200?'flex':'none'; });
   });
 })();
 
-// ─── Onboarding splash ────────────────────────────────────────────────────────
+// ─── Onboarding ───────────────────────────────────────────────────────────────
 (function() {
   var ob = document.getElementById('onboarding');
-  // Show only once — skip if already seen OR if already installed as PWA
   var seen = localStorage.getItem('kaf-ob-seen');
   var isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-  if (!seen && !isPWA) {
-    ob.style.display = 'flex';
-  }
+  if (!seen && !isPWA) ob.style.display = 'flex';
   document.getElementById('ob-btn').addEventListener('click', function() {
     localStorage.setItem('kaf-ob-seen', '1');
-    ob.style.opacity = '0';
-    ob.style.transition = 'opacity 0.4s';
-    setTimeout(function() { ob.style.display = 'none'; }, 400);
+    ob.style.opacity = '0'; ob.style.transition = 'opacity 0.4s';
+    setTimeout(function(){ ob.style.display='none'; }, 400);
   });
 })();
-document.getElementById('sheet-overlay').addEventListener('click', function(e){ if(e.target===this) closeSheet(); });
 
 document.querySelectorAll('.tile').forEach(function(t){
   t.addEventListener('click', function(){
-    catFilter = this.dataset.cat;
-    dayFilter = 'all';
-    go('prog');
-    buildPills();
-    renderProg();
+    catFilter = this.dataset.cat; dayFilter = 'all';
+    go('prog'); buildPills(); renderProg();
   });
 });
 
 // ─── Load ─────────────────────────────────────────────────────────────────────
 fetch(CSV)
   .then(function(r){ return r.text(); })
-  .then(function(t){
-    events = parseCSV(t);
-    buildHome();
-    buildPills();
-    renderProg();
-  })
+  .then(function(t){ events = parseCSV(t); buildHome(); buildPills(); renderProg(); })
   .catch(function(){ console.warn('CSV load failed'); });
 
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function(){
-    navigator.serviceWorker.register('sw.js').catch(function(){});
-  });
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
 }
 </script>
 </body>
